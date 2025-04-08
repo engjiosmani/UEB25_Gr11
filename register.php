@@ -1,3 +1,61 @@
+<?php
+$messages = "";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $email = $_POST["email"];
+  $name = $_POST["name"];
+  $password = $_POST["password"];
+  $dob = $_POST["dob"];
+  $errors = [];
+
+  if (empty($name)) {
+    $errors[] = "Name is required.";
+  }
+
+  if (empty($email)) {
+    $errors[] = "Email is required.";
+} elseif (!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email)) {
+    $errors[] = "Please enter a valid email address.";
+}
+
+  if (empty($password)) {
+    $errors[] = "Password is required.";
+  }
+
+  if (empty($dob)) {
+    $errors[] = "Date of birth is required.";
+} elseif (!preg_match("/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/", $dob)) {
+    $errors[] = "Date of birth must be in the format: dd-mm-yyyy.";
+} else {
+    $dob_parts = explode('-', $dob);
+    if (count($dob_parts) == 3) {
+      $day = (int)$dob_parts[0];
+      $month = (int)$dob_parts[1];
+      $year = (int)$dob_parts[2];
+      
+      if (!checkdate($month, $day, $year)) {
+        $errors[] = "Invalid date of birth.";
+      } else {
+        $age = date_diff(date_create($dob), date_create('today'))->y;
+        if ($age < 18) {
+          $errors[] = "You must be at least 18 years old to register.";
+        }
+      }
+    } else {
+      $errors[] = "Invalid date format.";
+    }
+  }
+
+
+  if (empty($errors)) {
+    $messages = "<div class='alert alert-success'>Form submitted successfully!</div>";
+  } else {
+    foreach ($errors as $error) {
+      $messages .= "<div class='alert alert-danger'>$error</div>";
+    }
+  }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,20 +138,28 @@
 
   <div class="register-box">
     <h2>Register</h2>
-    <form>
+    <?php if (!empty($messages)) echo $messages; ?>
+
+    <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
       <div class="mb-3">
         <label for="name" class="form-label">Full Name</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your full name">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name">
       </div>
 
       <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+        <input type="email" class="form-control" id="email" name="email" value="<?php echo isset($_POST['email']) ? $_POST['email'] : ''; ?>" placeholder="Enter your email">
+
       </div>
 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+      </div>
+
+      <div class="mb-3">
+        <label for="dob" class="form-label">Date of Birth (yyyy-mm-dd)</label>
+        <input type="text" class="form-control" id="dob" name="dob" placeholder="Enter your date of birth (yyyy-mm-dd)">
       </div>
 
       <button type="submit" class="btn btn-register w-100">Register</button>

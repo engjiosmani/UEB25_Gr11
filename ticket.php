@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,13 +21,7 @@
     <link href="css/bootstrap-icons.css" rel="stylesheet">
 
     <link href="css/templatemo-festava-live.css" rel="stylesheet">
-    <!--
-
-TemplateMo 583 Festava Live
-
-https://templatemo.com/tm-583-festava-live
-
--->
+    
 
 </head>
 
@@ -105,7 +98,7 @@ https://templatemo.com/tm-583-festava-live
                 <div class="row">
 
                     <div class="col-lg-6 col-10 mx-auto">
-                        <form class="custom-form ticket-form mb-5 mb-lg-0" action="#" method="post" role="form">
+                    <form class="custom-form ticket-form mb-5 mb-lg-0" action="ticket_process.php" method="post" role="form">
                             <h2 class="text-center mb-4">Get started here</h2>
 
                             <div class="ticket-form-body">
@@ -131,7 +124,8 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-check form-control">
                                             <input class="form-check-input" type="radio" name="TicketForm"
-                                                id="flexRadioDefault1">
+                                                id="flexRadioDefault1"
+                                                value="Early Bird">
                                             <label class="form-check-label" for="flexRadioDefault1">
                                                 Eary bird $120
                                             </label>
@@ -141,7 +135,7 @@ https://templatemo.com/tm-583-festava-live
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-check form-check-radio form-control">
                                             <input class="form-check-input" type="radio" name="TicketForm"
-                                                id="flexRadioDefault2">
+                                                id="flexRadioDefault2"  value="Standard">
                                             <label class="form-check-label" for="flexRadioDefault2">
                                                 Standard $240
                                             </label>
@@ -310,11 +304,7 @@ https://templatemo.com/tm-583-festava-live
         </div>
     </footer>
 
-    <!--
 
-T e m p l a t e M o
-
--->
     <!-- JAVASCRIPT FILES -->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -322,5 +312,4 @@ T e m p l a t e M o
     <script src="js/custom.js"></script>
 
 </body>
-
 </html>
