@@ -24,13 +24,7 @@
 
     <link href="css/templatemo-festava-live.css" rel="stylesheet">
 
-    <!--
 
-TemplateMo 583 Festava Live
-
-https://templatemo.com/tm-583-festava-live
-
--->
 </head>
 
 <body>
@@ -67,7 +61,7 @@ https://templatemo.com/tm-583-festava-live
                     Festava Live
                 </a>
 
-                <a href="ticket.html" class="btn custom-btn d-lg-none ms-auto me-4">Buy Ticket</a>
+                <a href="ticket.php" class="btn custom-btn d-lg-none ms-auto me-4">Buy Ticket</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

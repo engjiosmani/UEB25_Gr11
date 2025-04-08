@@ -158,8 +158,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
 
       <div class="mb-3">
-        <label for="dob" class="form-label">Date of Birth (yyyy-mm-dd)</label>
-        <input type="text" class="form-control" id="dob" name="dob" placeholder="Enter your date of birth (yyyy-mm-dd)">
+        <label for="dob" class="form-label">Date of Birth</label>
+        <input type="text" class="form-control" id="dob" name="dob" placeholder="Enter your date of birth (dd-mm-yyyy)">
       </div>
 
       <button type="submit" class="btn btn-register w-100">Register</button>
