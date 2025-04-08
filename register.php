@@ -99,8 +99,8 @@
       <button type="submit" class="btn btn-register w-100">Register</button>
 
       <div class="extra-links">
-        <a href="index.html">← Back to Home</a>
-        <a href="login.html">Already have an account? Login</a>
+        <a href="index.php">← Back to Home</a>
+        <a href="login.php">Already have an account? Login</a>
       </div>
     </form>
   </div>

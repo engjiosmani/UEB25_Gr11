@@ -95,8 +95,8 @@
       <button type="submit" class="btn btn-login w-100">Login</button>
 
       <div class="extra-links">
-        <a href="index.html">← Back to Home</a>
-        <a href="register.html">Create Account</a>
+        <a href="index.php">← Back to Home</a>
+        <a href="register.php">Create Account</a>
       </div>
     </form>
   </div>

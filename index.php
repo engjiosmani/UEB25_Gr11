@@ -47,7 +47,7 @@ https://templatemo.com/tm-583-festava-live
                         </p>
         
                         
-                        <a href="login.html" class="ms-auto d-flex align-items-center text-dark text-decoration-none">
+                        <a href="login.php" class="ms-auto d-flex align-items-center text-dark text-decoration-none">
                             <i class="bi bi-person-circle me-1 fs-5"></i>
                             <span class="fw-bold">Login</span>
                         </a>
@@ -102,7 +102,7 @@ https://templatemo.com/tm-583-festava-live
                     </ul>
                     
 
-                    <a href="ticket.html" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
+                    <a href="ticket.php" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
                     
 
                 </div>
@@ -455,7 +455,7 @@ https://templatemo.com/tm-583-festava-live
                                 <li class="pricing-list-item">High-quality sound and lighting</li>
                             </ul>
 
-                            <a class="link-fx-1 color-contrast-higher mt-4" href="ticket.html">
+                            <a class="link-fx-1 color-contrast-higher mt-4" href="ticket.php">
                                 <span>Buy Ticket</span>
                                 <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -490,7 +490,7 @@ https://templatemo.com/tm-583-festava-live
                                 <li class="pricing-list-item">Live chat support and concierge</li>
                             </ul>
 
-                            <a class="link-fx-1 color-contrast-higher mt-4" href="ticket.html">
+                            <a class="link-fx-1 color-contrast-higher mt-4" href="ticket.php">
                                 <span>Buy Ticket</span>
                                 <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
