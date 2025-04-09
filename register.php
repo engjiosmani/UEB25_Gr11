@@ -1,11 +1,14 @@
 <?php
+require_once 'klasat/User.php';
+session_start();
+
 $messages = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $email = $_POST["email"];
-  $name = $_POST["name"];
-  $password = $_POST["password"];
-  $dob = $_POST["dob"];
-  $errors = [];
+  $email = $_POST["email"] ?? '';
+    $name = $_POST["name"] ?? '';
+    $password = $_POST["password"] ?? '';
+    $dob = $_POST["dob"] ?? '';
+    $errors = [];
 
   if (empty($name)) {
     $errors[] = "Name is required.";
@@ -47,14 +50,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
   if (empty($errors)) {
-    $messages = "<div class='alert alert-success'>Form submitted successfully!</div>";
-  } else {
+    $user = new User($name, $email, $password, $dob);
+    $_SESSION['user'] = $user;
+    $messages = "<div class='alert alert-success'>" . $user->register() . "</div>";
+    echo "<div class='alert alert-success'>Regjistrimi ka qenë i suksesshëm! Do të ridrejtoheni në faqen e login-it pas disa sekondash.</div>";
+    header("Refresh: 3; url=login.php");
+    exit();
+} else {
     foreach ($errors as $error) {
-      $messages .= "<div class='alert alert-danger'>$error</div>";
+        $messages .= "<div class='alert alert-danger'>$error</div>";
     }
-  }
 }
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
