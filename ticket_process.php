@@ -1,4 +1,7 @@
 <?php
+define("EARLY_BIRD_PRICE", 120);
+define("STANDARD_PRICE", 240);
+define("MAX_TICKETS", 10);
 function formatPhoneNumber($phone) {
     $phone = preg_replace("/\D/", "", $phone);
 
@@ -7,6 +10,16 @@ function formatPhoneNumber($phone) {
     }
 
     return $phone; 
+}
+function calculateTotalPrice($ticket_type, $num_tickets) {
+    switch ($ticket_type) {
+        case 'Early Bird':
+            return $num_tickets * EARLY_BIRD_PRICE;
+        case 'Standard':
+            return $num_tickets * STANDARD_PRICE;
+        default:
+            return 0;
+    }
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -30,11 +43,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($ticket_type)) {
         $error_msg .= "Please select a ticket type.<br>";
     }
-
     if (empty($error_msg)) {
+        $total_price = calculateTotalPrice($ticket_type, $num_tickets);
+        $order_details = array(
+            'customer_name' => strtoupper($name), 
+            'email' => $email,
+            'phone' => $formatted_phone,
+            'ticket_type' => $ticket_type,
+            'num_tickets' => $num_tickets,
+            'total_price' => $total_price
+        );
+   
         echo "<h2>Thank you, $name!</h2>";
         echo "<p>You have ordered $num_tickets ticket(s) for the $ticket_type category.</p>";
+        echo "<p>Total price: $" . $total_price . "</p>";
         echo "<p>Your formatted phone number is: $formatted_phone</p>";
+
+        echo "<pre>Order details: ";
+        var_dump($order_details);
+        echo "</pre>";
+
     } else {
         echo "<p style='color:red;'>$error_msg</p>";
     }
