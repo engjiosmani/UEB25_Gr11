@@ -1,9 +1,9 @@
 <?php
 class User {
-    public $name;
-    public $email;
-    public $password;
-    public $dob;
+    private $name;
+    private $email;
+    private $password;
+    private $dob;
 
     public function __construct($name, $email, $password, $dob) {
         $this->name = $name;
@@ -52,6 +52,10 @@ class User {
 
     public function setDob($dob) {
         $this->dob = $dob;
+    }
+
+    public function __destruct() {
+        echo "Objekti i përdoruesit {$this->name} është shkatërruar.\n";
     }
 }
 ?>
