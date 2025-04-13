@@ -63,6 +63,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var_dump($order_details);
         echo "</pre>";
 
+        // Sortimet
+        $sorted = $order_details;
+        sort($sorted);
+        echo "<pre>sort():\n";
+        print_r($sorted);
+        echo "</pre>";
+
+        $sorted = $order_details;
+        rsort($sorted);
+        echo "<pre>rsort():\n";
+        print_r($sorted);
+        echo "</pre>";
+
+        $sorted = $order_details;
+        asort($sorted);
+        echo "<pre>asort():\n";
+        print_r($sorted);
+        echo "</pre>";
+
+        $sorted = $order_details;
+        arsort($sorted);
+        echo "<pre>arsort():\n";
+        print_r($sorted);
+        echo "</pre>";
+
+        $sorted = $order_details;
+        ksort($sorted);
+        echo "<pre>ksort():\n";
+        print_r($sorted);
+        echo "</pre>";
+
+        $sorted = $order_details;
+        krsort($sorted);
+        echo "<pre>krsort():\n";
+        print_r($sorted);
+        echo "</pre>";
+
     } else {
         echo "<p style='color:red;'>$error_msg</p>";
     }
