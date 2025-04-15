@@ -258,8 +258,48 @@
                 ]
                 
             ];
+                // Sortimi bazuar në zgjedhjen e përdoruesit
+            $sort_type = $_GET['sort'] ?? 'name_asc';
+            usort($artists, function($a, $b) use ($sort_type) {
+                switch ($sort_type) {
+                    case 'name_asc':  return strcmp($a['name'], $b['name']);
+                    case 'name_desc': return strcmp($b['name'], $a['name']);
+                    case 'age_asc':   return $a['age'] - $b['age'];
+                    case 'age_desc':  return $b['age'] - $a['age'];
+                    case 'genre_asc': return strcmp($a['genre'], $b['genre']);
+                    case 'genre_desc':return strcmp($b['genre'], $a['genre']);
+                    default:          return 0;
+                }
+            });
 
                     ?>
+                    <!-- Shfaqja e artistëve (me strukturë të njëjtë si origjinali) -->
+            <div class="row">
+                <?php foreach ($artists as $artist): ?>
+                    <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <div class="artists-thumb">
+                            <div class="artists-image-wrap">
+                                <img src="images/artists/<?= $artist['image'] ?>" 
+                                     class="artists-image img-fluid" 
+                                     alt="<?= $artist['name'] ?>">
+                            </div>
+
+                            <div class="artists-hover">
+                                <p><strong>Name:</strong> <?= $artist['name'] ?></p>
+                                <p><strong>Age:</strong> <?= $artist['age'] ?> years</p>
+                                <p><strong>Genre:</strong> <?= $artist['genre'] ?></p>
+                                <hr>
+                                <p class="mb-0">
+                                    <strong>Music:</strong> 
+                                    <a href="#"><?= $artist['genre'] ?> Hits</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
         </section>
 
 
