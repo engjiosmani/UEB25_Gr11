@@ -1,3 +1,11 @@
+<?php
+session_start();
+// Ruaj preferencën e sortimit në sesion
+if (isset($_GET['sort'])) {
+    $_SESSION['sort_preference'] = $_GET['sort'];
+}
+?>
+
 <!doctype html>
 <html lang="en">
 
