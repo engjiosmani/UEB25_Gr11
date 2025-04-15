@@ -213,6 +213,7 @@
             </div>
         </section>
 
+          <!--Përdorimi i funksioneve për sortime të vargjeve (ksort(), arsort(), krsort())-->
 
         <section class="artists-section section-padding" id="section_3">
             <div class="container">
@@ -220,6 +221,18 @@
 
                     <div class="col-12 text-center">
                         <h2 class="mb-4">Meet Artists</h1>
+
+                        <!-- Forma për sortim -->
+                <form method="GET" class="mb-5">
+                    <select name="sort" class="form-select mx-auto" style="width: 200px;" onchange="this.form.submit()">
+                        <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>A-Z (Name)</option>
+                        <option value="name_desc" <?= ($_GET['sort'] ?? '') === 'name_desc' ? 'selected' : '' ?>>Z-A (Name)</option>
+                        <option value="age_asc" <?= ($_GET['sort'] ?? '') === 'age_asc' ? 'selected' : '' ?>>Age (Youngest First)</option>
+                        <option value="age_desc" <?= ($_GET['sort'] ?? '') === 'age_desc' ? 'selected' : '' ?>>Age (Oldest First)</option>
+                        <option value="genre_asc" <?= ($_GET['sort'] ?? '') === 'genre_asc' ? 'selected' : '' ?>>Genre (A-Z)</option>
+                        <option value="genre_desc" <?= ($_GET['sort'] ?? '') === 'genre_desc' ? 'selected' : '' ?>>Genre (Z-A)</option>
+                    </select>
+                </form>
                     </div>
 
                     <div class="col-lg-5 col-12">
