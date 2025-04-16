@@ -175,6 +175,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 
                         <a class="btn custom-btn smoothscroll" href="#section_2">Let's begin</a>
                     </div>
+                    <?php 
+    $festival_days = ['Friday, August 10', 'Saturday, August 11', 'Sunday, August 12'];
+?>
+<div class="col-lg-12 col-12 mt-4">
+    <div class="festival-days-box">
+        <h5 class="text-white text-center mb-3">Festival Days</h5>
+        <ul class="festival-days-list">
+            <?php foreach ($festival_days as $index => $day): ?>
+                <li class="text-white">
+                    <?= ($index + 1) ?>. <?= $day ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
 
                     <div class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center">
                         <div class="date-wrap">
