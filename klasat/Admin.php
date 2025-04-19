@@ -9,11 +9,18 @@ class Admin extends User {
         $this->role = $role;
     }
 
-    public function displayAdminInfo() {
-        echo "<h3>Admin Profile</h3>";
-        echo "Name: $this->fullname<br>";
-        echo "Email (protected): " . $this->getEmail() . "<br>";
-        echo "Role: $this->role<br>";
+    public function displayAdminInfo($return = false) {
+        $info = "<div style='text-align:center;'>
+                    <h3>Admin Profile</h3>
+                    Name: {$this->fullname}<br>
+                    Email (protected): {$this->email}<br>
+                    Role: admin
+                 </div>";
+        if ($return) {
+            return $info;
+        } else {
+            echo $info;
+        }
     }
 }
 ?>

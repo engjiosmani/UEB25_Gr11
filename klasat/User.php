@@ -12,7 +12,7 @@ class User {
         $this->birthday = $birthday;
     }
 
-    protected function getEmail() {
+    public function getEmail() {
         return $this->email;
     }
 
@@ -36,11 +36,12 @@ class User {
     }
 
     public function login($email, $password) {
-        if ($this->getEmail() === $email && $this->getPassword() === $password) {
-            echo "Kyçja me sukses! Mirë se vini, $this->fullname";
-        } else {
-            echo "Email ose fjalëkalim i gabuar.";
-        }
+        return $this->getEmail() === $email && $this->getPassword() === $password;
     }
+    public function getName() {
+        return $this->fullname;
+    }
+    
+    
 }
 ?>

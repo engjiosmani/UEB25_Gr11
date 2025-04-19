@@ -2,16 +2,38 @@
 require_once 'klasat/User.php';
 require_once 'klasat/Admin.php';
 
-// simulim per testim nje user i regjistrum me keto te dhena
-$dummyUser = new User("Edonita Gashi", "edonita@example.com", "1234", "2003-05-20");
+// testim i nje user apo admin 
+$dummyUser = new User("Edonita Gashi", "edonita@example.com", password_hash("1234", PASSWORD_DEFAULT), "2003-05-20");
+$dummyAdmin = new Admin("Engji Osmani", "engji@example.com", password_hash("admin123", PASSWORD_DEFAULT), "2000-10-04");
+
+$email = $password = '';
+$message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+  $email = $_POST['email'];
+  $password = $_POST['password'];
 
-    $dummyUser->login($email, $password);
+  $loginSuccess = false;
+
+    // test user login
+    if ($dummyUser->getEmail() === $email && password_verify($password, $dummyUser->getPassword())) {
+      $loginSuccess = true;
+      $message = "<div style='color:green; text-align:center;'>User login sukses! Mirë se vini, {$dummyUser->fullname}</div>";
+  }
+
+    // test admin login nese user ka fail
+    elseif ($dummyAdmin->getEmail() === $email && password_verify($password, $dummyAdmin->getPassword())) {
+      $loginSuccess = true;
+      $adminInfo = $dummyAdmin->displayAdminInfo(true); // modifiko funksionin që të kthejë tekst në vend që ta printojë
+      $message = "<div style='color:green; text-align:center;'>Admin login sukses! Mirë se vini, {$dummyAdmin->fullname}</div><br>$adminInfo";
+  }
+
+    // nese login fail edhe per user edhe per admin
+    if (!$loginSuccess) {
+      $message = "<div style='color:red; text-align:center;'>Email ose fjalëkalim i gabuar.</div>";
+  }
 }
-
+?>
 
 
 <!DOCTYPE html>
@@ -96,6 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <div class="login-box">
     <h2>Login</h2>
+    <?php if (!empty($message)) echo $message; ?>
     <form method="POST" action="">
       <div class="mb-3">
         <label for="email" class="form-label">Email address</label>

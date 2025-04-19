@@ -1,5 +1,6 @@
 <?php
 require_once 'klasat/User.php';
+require_once 'klasat/Admin.php';
 
 $messages = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -71,6 +72,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($errors as $error) {
         $messages .= "<div class='alert alert-danger'>$error</div>";
     }
+}
+
+//testimi per regjistrimin e Admin
+if (isset($_POST['is_admin']) && $_POST['is_admin'] == 'on' && empty($errors)) {
+  $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+  $admin = new Admin($name, $email, $hashedPassword, $dob);
+
+  ob_start();
+  $admin->displayAdminInfo();
+  $output = ob_get_clean();
+
+  $messages = "<div class='alert alert-success'>$output</div>";
+  echo $messages;
+  header("Refresh: 3; url=login.php");
+  exit();
 }
 }
 
@@ -182,6 +198,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="mb-3">
         <label for="dob" class="form-label">Date of Birth</label>
         <input type="text" class="form-control" id="dob" name="dob" placeholder="Enter your date of birth (dd-mm-yyyy)">
+      </div>
+
+      <div class="mb-3">
+        <label for="is_admin" class="form-label">Register as Admin</label>
+        <input type="checkbox" id="is_admin" name="is_admin" value="on">
       </div>
 
       <button type="submit" class="btn btn-register w-100">Register</button>
