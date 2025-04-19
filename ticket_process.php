@@ -27,12 +27,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['ticket-form-email'];
     $phone = $_POST['ticket-form-phone'];
     $ticket_type = $_POST['TicketForm'] ?? 'Not selected';
-    $num_tickets = $_POST['ticket-form-number'];
+    $num_tickets = (int)$_POST['ticket-form-number'];
     $message = $_POST['ticket-form-message'];
 
     $error_msg = ''; 
 
     $formatted_phone = formatPhoneNumber($phone);
+
+    if (empty($name)) {
+        $error_msg .= "Name is required.<br>";
+      } elseif(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
+        $error_msg .= "Name can only contain letters and spaces.<br>";
+    }
+    
+      if (empty($email)) {
+        $error_msg .= "Email is required.<br>";
+    } elseif(!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email)) {
+        $error_msg .= "Please enter a valid email address.<br>";
+    }
 
     if (empty($num_tickets)) {
         $error_msg .= "The number of tickets is required.<br>";

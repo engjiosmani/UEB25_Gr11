@@ -12,17 +12,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (empty($name)) {
     $errors[] = "Name is required.";
-  }
+  } elseif(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
+    $errors[] = "Name can only contain letters and spaces.";
+}
 
   if (empty($email)) {
     $errors[] = "Email is required.";
-} elseif (!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email)) {
+} elseif(!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email)) {
     $errors[] = "Please enter a valid email address.";
 }
 
   if (empty($password)) {
     $errors[] = "Password is required.";
-  }
+  }elseif(strlen($password) < 8) {
+    $errors[] = "Password must be at least 8 characters.";
+} elseif (!preg_match("/[A-Z]/", $password)) {
+    $errors[] = "Password must include at least one uppercase letter.";
+} elseif (!preg_match("/[a-z]/", $password)) {
+    $errors[] = "Password must include at least one lowercase letter.";
+} elseif (!preg_match("/[0-9]/", $password)) {
+    $errors[] = "Password must include at least one number.";
+} elseif (!preg_match("/[\W]/", $password)) {
+    $errors[] = "Password must include at least one special character.";
+}
 
   if (empty($dob)) {
     $errors[] = "Date of birth is required.";
@@ -51,7 +63,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+//testimi per regjistrimin e Admin
+if (isset($_POST['is_admin']) && $_POST['is_admin'] == 'on' && empty($errors)) {
+  $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+  $admin = new Admin($name, $email, $hashedPassword, $dob);
 
+  ob_start();
+  $admin->displayAdminInfo();
+  $output = ob_get_clean();
+
+  $messages = "<div class='alert alert-success'>$output</div>";
+  echo $messages;
+  header("Refresh: 3; url=login.php");
+  exit();
+}
   
   if (empty($errors)) {
     
@@ -77,22 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-//testimi per regjistrimin e Admin
-if (isset($_POST['is_admin']) && $_POST['is_admin'] == 'on' && empty($errors)) {
-  $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-  $admin = new Admin($name, $email, $hashedPassword, $dob);
 
-  ob_start();
-  $admin->displayAdminInfo();
-  $output = ob_get_clean();
-
-  $messages = "<div class='alert alert-success'>$output</div>";
-  echo $messages;
-  header("Refresh: 3; url=login.php");
-  exit();
 }
-}
-
 
 ?>
 
@@ -184,7 +195,8 @@ if (isset($_POST['is_admin']) && $_POST['is_admin'] == 'on' && empty($errors)) {
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
       <div class="mb-3">
         <label for="name" class="form-label">Full Name</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name">
+        <input type="text" class="form-control" id="name" name="name" value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>"
+        placeholder="Enter your full name">
       </div>
 
       <div class="mb-3">
