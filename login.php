@@ -1,5 +1,6 @@
 <?php
 require_once 'klasat/User.php';
+require_once 'klasat/Admin.php';
 
 // simulim per testim nje user i regjistrum me keto te dhena
 $dummyUser = new User("Edonita Gashi", "edonita@example.com", "1234", "2003-05-20");
@@ -10,7 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $dummyUser->login($email, $password);
 }
-?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">

@@ -1,7 +1,7 @@
 <?php
 class User {
     public $fullname;
-    private $email;
+    protected $email;
     private $password;
     public $birthday;
 
@@ -12,7 +12,7 @@ class User {
         $this->birthday = $birthday;
     }
 
-    public function getEmail() {
+    protected function getEmail() {
         return $this->email;
     }
 
