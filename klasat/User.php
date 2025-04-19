@@ -1,61 +1,30 @@
 <?php
 class User {
-    private $name;
-    private $email;
-    private $password;
-    private $dob;
+    public $fullname;
+    public $email;
+    public $password;
+    public $birthday;
 
-    public function __construct($name, $email, $password, $dob) {
-        $this->name = $name;
+    public function __construct($fullname, $email, $password, $birthday) {
+        $this->fullname = $fullname;
         $this->email = $email;
         $this->password = $password;
-        $this->dob = $dob;
+        $this->birthday = $birthday;
     }
 
-    public function register() {
-        return "Përdoruesi {$this->name} u regjistrua me sukses!";
+    public function displayInfo() {
+        echo "Përdoruesi u regjistrua me sukses!<br>";
+        echo "Emri i plotë: $this->fullname <br>";
+        echo "Email: $this->email <br>";
+        echo "Data e lindjes: $this->birthday <br>";
     }
 
     public function login($email, $password) {
-        return $email === $this->email && $password === $this->password;
-    }
-    
-    // Getters
-    public function getName() {
-        return $this->name;
-    }
-
-    public function getEmail() {
-        return $this->email;
-    }
-
-    public function getPassword() {
-        return $this->password;
-    }
-
-    public function getDob() {
-        return $this->dob;
-    }
-
-    // Setters
-    public function setName($name) {
-        $this->name = $name;
-    }
-
-    public function setEmail($email) {
-        $this->email = $email;
-    }
-
-    public function setPassword($password) {
-        $this->password = $password;
-    }
-
-    public function setDob($dob) {
-        $this->dob = $dob;
-    }
-
-    public function __destruct() {
-        echo "Objekti i përdoruesit {$this->name} është shkatërruar.\n";
+        if ($this->email === $email && $this->password === $password) {
+            echo "Kyçja me sukses! Mirë se vini, $this->fullname";
+        } else {
+            echo "Email ose fjalëkalim i gabuar.";
+        }
     }
 }
 ?>
