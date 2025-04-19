@@ -26,27 +26,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (empty($dob)) {
     $errors[] = "Date of birth is required.";
-} elseif (!preg_match("/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/", $dob)) {
-    $errors[] = "Date of birth must be in the format: dd-mm-yyyy.";
+} elseif (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $dob)) {
+    $errors[] = "Date of birth must be in the format: YYYY-MM-DD.";
 } else {
     $dob_parts = explode('-', $dob);
-    if (count($dob_parts) == 3) {
-      $day = (int)$dob_parts[0];
-      $month = (int)$dob_parts[1];
-      $year = (int)$dob_parts[2];
-      
-      if (!checkdate($month, $day, $year)) {
-        $errors[] = "Invalid date of birth.";
-      } else {
-        $age = date_diff(date_create($dob), date_create('today'))->y;
-        if ($age < 18) {
-          $errors[] = "You must be at least 18 years old to register.";
+    if (count($dob_parts) === 3) {
+        $year = (int)$dob_parts[0];
+        $month = (int)$dob_parts[1];
+        $day = (int)$dob_parts[2];
+
+        if (!checkdate($month, $day, $year)) {
+            $errors[] = "Invalid date of birth.";
+        } else {
+            $birthDate = new DateTime($dob);
+            $today = new DateTime('today');
+            $age = $birthDate->diff($today)->y;
+
+            if ($age < 18) {
+                $errors[] = "You must be at least 18 years old to register.";
+            }
         }
-      }
     } else {
-      $errors[] = "Invalid date format.";
+        $errors[] = "Invalid date format.";
     }
-  }
+}
 
 
   
@@ -197,7 +200,8 @@ if (isset($_POST['is_admin']) && $_POST['is_admin'] == 'on' && empty($errors)) {
 
       <div class="mb-3">
         <label for="dob" class="form-label">Date of Birth</label>
-        <input type="text" class="form-control" id="dob" name="dob" placeholder="Enter your date of birth (dd-mm-yyyy)">
+        <input type="date" class="form-control" id="dob" name="dob" value="<?php echo isset($_POST['dob']) ? $_POST['dob'] : ''; ?>" placeholder="YYYY-MM-DD">
+
       </div>
 
       <div class="mb-3">

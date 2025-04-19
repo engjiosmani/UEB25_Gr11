@@ -116,7 +116,7 @@
                                 </div>
 
                                 <input type="tel" class="form-control" name="ticket-form-phone"
-                                    placeholder="049 123 456" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required="">
+                                    placeholder="049-123-456" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required="">
 
                                 <h6>Choose Ticket Type</h6>
 

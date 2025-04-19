@@ -13,7 +13,7 @@ class Admin extends User {
         $info = "<div style='text-align:center;'>
                     <h3>Admin Profile</h3>
                     Name: {$this->fullname}<br>
-                    Email (protected): {$this->email}<br>
+                    Email (protected): {$this->getEmail()}<br>
                     Role: admin
                  </div>";
         if ($return) {

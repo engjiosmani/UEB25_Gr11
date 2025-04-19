@@ -18,19 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // test user login
     if ($dummyUser->getEmail() === $email && password_verify($password, $dummyUser->getPassword())) {
       $loginSuccess = true;
-      $message = "<div style='color:green; text-align:center;'>User login sukses! Mirë se vini, {$dummyUser->fullname}</div>";
+      $message = "<div style='color:green; text-align:center;'>User login success! Welcome, {$dummyUser->fullname}</div>";
   }
 
     // test admin login nese user ka fail
     elseif ($dummyAdmin->getEmail() === $email && password_verify($password, $dummyAdmin->getPassword())) {
       $loginSuccess = true;
-      $adminInfo = $dummyAdmin->displayAdminInfo(true); // modifiko funksionin që të kthejë tekst në vend që ta printojë
-      $message = "<div style='color:green; text-align:center;'>Admin login sukses! Mirë se vini, {$dummyAdmin->fullname}</div><br>$adminInfo";
+      $adminInfo = $dummyAdmin->displayAdminInfo(true); 
+      $message = "<div style='color:green; text-align:center;'>Admin login success! Welcome, {$dummyAdmin->fullname}</div><br>$adminInfo";
   }
 
     // nese login fail edhe per user edhe per admin
     if (!$loginSuccess) {
-      $message = "<div style='color:red; text-align:center;'>Email ose fjalëkalim i gabuar.</div>";
+      $message = "<div style='color:red; text-align:center;'>Incorrect email or password.</div>";
   }
 }
 ?>
