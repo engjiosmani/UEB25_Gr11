@@ -1,8 +1,7 @@
 <?php
 require_once 'klasat/User.php';
-session_start();
 
-$messages = "";
+$messages = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $email = $_POST["email"] ?? '';
     $name = $_POST["name"] ?? '';
@@ -49,19 +48,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
 
+  
   if (empty($errors)) {
-    $user = new User($name, $email, $password, $dob);
-    $_SESSION['user'] = $user;
-    $messages = "<div class='alert alert-success'>" . $user->register() . "</div>";
-    echo "<div class='alert alert-success'>Regjistrimi ka qenë i suksesshëm! Do të ridrejtoheni në faqen e login-it pas disa sekondash.</div>";
-    header("Refresh: 3; url=login.php");
-    exit();
+    
+        // regjistrimi i perdoruesit
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $user = new User($name, $email, $hashedPassword, $dob);
+
+        // e merr outputin nga metoda displayinfo te klasa user
+        ob_start();
+        $user->displayInfo();
+        $output = ob_get_clean();
+
+        $messages = "<div class='alert alert-success'>$output</div>";
+
+        // e shfaq mesazhin edhe ridrejton pas 3 sekondave
+        echo $messages;
+        header("Refresh: 3; url=login.php");
+        exit();
 } else {
+    // shfaq gabim nese ndodh gjate regjistrimit te perdoruesit
     foreach ($errors as $error) {
         $messages .= "<div class='alert alert-danger'>$error</div>";
     }
 }
 }
+
 
 ?>
 

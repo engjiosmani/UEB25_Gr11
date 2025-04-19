@@ -1,27 +1,14 @@
 <?php
-
 require_once 'klasat/User.php';
-session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Kontrollo nëse të dhënat janë dërguar për email dhe password
-    if (isset($_POST['email']) && isset($_POST['password'])) {
-        if (isset($_SESSION['user'])) {
-            $user = $_SESSION['user'];
+// simulim per testim nje user i regjistrum me keto te dhena
+$dummyUser = new User("Edonita Gashi", "edonita@example.com", "1234", "2003-05-20");
 
-            if ($user->login($_POST['email'], $_POST['password'])) {
-                echo "Mirësevini, {$user->name}!";
-                header("Refresh: 2; url=index.php");
-                exit();
-            } else {
-                echo "Email ose fjalëkalim i gabuar!";
-            }
-        } else {
-            echo "Ju duhet të regjistroheni fillimisht!";
-        }
-    } else {
-        echo "Ju lutem, plotësoni të gjitha fushat!";
-    }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $dummyUser->login($email, $password);
 }
 ?>
 
@@ -118,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
       </div>
 
-      <button type="submit" class="btn btn-login w-100">Login</button>
+      <button type="submit" name="login" class="btn btn-login w-100">Login</button>
 
       <div class="extra-links">
         <a href="index.php">← Back to Home</a>
