@@ -1,9 +1,13 @@
 <?php
-session_start();
-// Ruaj preferencën e sortimit në sesion
-if (isset($_GET['sort'])) {
-    $_SESSION['sort_preference'] = $_GET['sort'];
+
+$sort_preference = 'default';
+function set_sort_preference() {
+    global $sort_preference; 
+    if (isset($_GET['sort'])) {
+        $sort_preference = $_GET['sort'];
+    }
 }
+set_sort_preference();
 
 // 1. Funksioni për të lexuar fjalët e papërshtatshme nga skedari
 function get_bad_words() {
@@ -16,41 +20,30 @@ function get_bad_words() {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
-    // 2. Marr mesazhin nga forma
+    
     $message = $_POST["contact-message"];
     
-    // 3. Pastro mesazhin me RegEx
-    $message_cleaned = strip_tags($message); // Heq HTML/SCRIPT
+    $message_cleaned = strip_tags($message); 
     
-    // Heq emojis (shtesë e re)
     $message_cleaned = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}]/u', '', $message_cleaned);
     
-    // Heq hashtag dhe mentions
     $message_cleaned = preg_replace("/[#@]\w+/", "", $message_cleaned);
     
-    // Filtro fjalët e papërshtatshme
     $bad_words = get_bad_words();
     if (!empty($bad_words)) {
         $pattern = '/\b(' . implode('|', array_map('preg_quote', $bad_words)) . ')\b/iu';
         $message_cleaned = preg_replace($pattern, "***", $message_cleaned);
     }
     
-    // Formatizo URL-të (shtesë e re)
     $message_cleaned = preg_replace(
         '/(https?:\/\/[^\s]+)/', 
         '<a href="$1" target="_blank" rel="noopener">$1</a>', 
         $message_cleaned
     );
     
-    // Heq hapësirat e tepërta (shtesë e re)
     $message_cleaned = preg_replace('/\s+/', ' ', trim($message_cleaned));
     
-    // 4. Ruaj për shfaqje
-    $_SESSION['cleaned_message'] = [
-        'original' => htmlspecialchars($message),
-        'cleaned' => $message_cleaned // Nuk përdor htmlspecialchars këtu për të ruajtur linket
-    ];
-
+    
     header("Location: " . $_SERVER['PHP_SELF'] . "#section_6");
     exit;
 }
