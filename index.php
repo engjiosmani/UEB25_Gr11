@@ -281,14 +281,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 
           <!--Përdorimi i funksioneve për sortime të vargjeve (ksort(), arsort(), krsort())-->
 
-        <section class="artists-section section-padding" id="section_3">
-            <div class="container">
-                <div class="row justify-content-center">
+          <section class="artists-section section-padding" id="section_3">
+    <div class="container">
+        <div class="row justify-content-center">
 
-                    <div class="col-12 text-center">
-                        <h2 class="mb-4">Meet Artists</h1>
+            <div class="col-12 text-center">
+                <h2 class="mb-4">Meet Artists</h2>
 
-                        <!-- Forma për sortim -->
                 <form method="GET" class="mb-5">
                     <select name="sort" class="form-select mx-auto" style="width: 200px;" onchange="this.form.submit()">
                         <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>A-Z (Name)</option>
@@ -299,59 +298,93 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                         <option value="genre_desc" <?= ($_GET['sort'] ?? '') === 'genre_desc' ? 'selected' : '' ?>>Genre (Z-A)</option>
                     </select>
                 </form>
-                    </div>
+            </div>
 
-                    <?php 
-                     // Vargu i artistëve me të dhëna të plota (emër, moshë, zhanr, foto)
+            <?php 
+        
             $artists = [
-                [
-                    'name' => 'Madona',
-                    'age' => 65,
-                    'genre' => 'Pop',
-                    'image' => 'madonna.webp'
-                ],
-                [
-                    'name' => 'Rihana',
-                    'age' => 35,
-                    'genre' => 'R&B',
-                    'image' => 'rihannaa.avif'
-                ],
-                [
-                    'name' => 'Bruno Mars',
-                    'age' => 38,
-                    'genre' => 'Pop',
-                    'image' => 'brunomars.jpg'
-                ]
-                
+                'Madona' => ['age' => 65, 'genre' => 'Pop', 'image' => 'madonna.webp'],
+                'Rihana' => ['age' => 35, 'genre' => 'R&B', 'image' => 'rihannaa.avif'],
+                'Bruno Mars' => ['age' => 38, 'genre' => 'Pop', 'image' => 'brunomars.jpg']
             ];
-                // Sortimi bazuar në zgjedhjen e përdoruesit
-            $sort_type = $_GET['sort'] ?? 'name_asc';
-            usort($artists, function($a, $b) use ($sort_type) {
-                switch ($sort_type) {
-                    case 'name_asc':  return strcmp($a['name'], $b['name']);
-                    case 'name_desc': return strcmp($b['name'], $a['name']);
-                    case 'age_asc':   return $a['age'] - $b['age'];
-                    case 'age_desc':  return $b['age'] - $a['age'];
-                    case 'genre_asc': return strcmp($a['genre'], $b['genre']);
-                    case 'genre_desc':return strcmp($b['genre'], $a['genre']);
-                    default:          return 0;
-                }
-            });
 
-                    ?>
-                    <!-- Shfaqja e artistëve (me strukturë të njëjtë si origjinali) -->
+    
+            $sort_type = $_GET['sort'] ?? 'name_asc';
+
+            switch ($sort_type) {
+                case 'name_asc':
+                    ksort($artists); 
+                    break;
+                    
+                case 'name_desc':
+                    krsort($artists); 
+                    break;
+                    
+                case 'age_asc':
+                    
+                    $ages = array_column($artists, 'age');
+                    asort($ages); 
+                    
+                    
+                    $sorted_artists = [];
+                    foreach ($ages as $key => $age) {
+                        $name = array_keys($artists)[$key];
+                        $sorted_artists[$name] = $artists[$name];
+                    }
+                    $artists = $sorted_artists;
+                    break;
+                    
+                case 'age_desc':
+                    $ages = array_column($artists, 'age');
+                    arsort($ages); 
+                    
+                    $sorted_artists = [];
+                    foreach ($ages as $key => $age) {
+                        $name = array_keys($artists)[$key];
+                        $sorted_artists[$name] = $artists[$name];
+                    }
+                    $artists = $sorted_artists;
+                    break;
+                    
+                case 'genre_asc':
+                    $genres = array_column($artists, 'genre');
+                    asort($genres); 
+                    
+                    $sorted_artists = [];
+                    foreach ($genres as $key => $genre) {
+                        $name = array_keys($artists)[$key];
+                        $sorted_artists[$name] = $artists[$name];
+                    }
+                    $artists = $sorted_artists;
+                    break;
+                    
+                case 'genre_desc':
+                    $genres = array_column($artists, 'genre');
+                    arsort($genres); 
+                    
+                    $sorted_artists = [];
+                    foreach ($genres as $key => $genre) {
+                        $name = array_keys($artists)[$key];
+                        $sorted_artists[$name] = $artists[$name];
+                    }
+                    $artists = $sorted_artists;
+                    break;
+            }
+            ?>
+
+        
             <div class="row">
-                <?php foreach ($artists as $artist): ?>
+                <?php foreach ($artists as $name => $artist): ?>
                     <div class="col-lg-4 col-md-6 col-12 mb-4">
                         <div class="artists-thumb">
                             <div class="artists-image-wrap">
                                 <img src="images/artists/<?= $artist['image'] ?>" 
                                      class="artists-image img-fluid" 
-                                     alt="<?= $artist['name'] ?>">
+                                     alt="<?= $name ?>">
                             </div>
 
                             <div class="artists-hover">
-                                <p><strong>Name:</strong> <?= $artist['name'] ?></p>
+                                <p><strong>Name:</strong> <?= $name ?></p>
                                 <p><strong>Age:</strong> <?= $artist['age'] ?> years</p>
                                 <p><strong>Genre:</strong> <?= $artist['genre'] ?></p>
                                 <hr>
@@ -366,8 +399,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
             </div>
         </div>
     </div>
-        </section>
-
+</section>
 
         <section class="schedule-section section-padding" id="section_4">
     <div class="container">
