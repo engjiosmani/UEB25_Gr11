@@ -2,14 +2,14 @@
 define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
 define("MAX_TICKETS", 10);
-function formatPhoneNumber($phone) {
-    $phone = preg_replace("/\D/", "", $phone);
-
-    if (preg_match("/^(\d{3})(\d{3})(\d{3})$/", $phone, $matches)) {
-        return $matches[1] . '-' . $matches[2] . '-' . $matches[3];
+function  validateAndFormatPhone($phone) {
+    $phone = preg_replace("/\s+/", "", $phone);
+    if (preg_match("/^\d{9}$/", $phone)) {
+        // Formatim me viza: xxx-xxx-xxx
+        return substr($phone, 0, 3) . '-' . substr($phone, 3, 3) . '-' . substr($phone, 6, 3);
+    } else {
+        return false; // nuk është valid
     }
-
-    return $phone; 
 }
 function calculateTotalPrice($ticket_type, $num_tickets) {
     switch ($ticket_type) {
@@ -32,8 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $error_msg = ''; 
 
-    $formatted_phone = formatPhoneNumber($phone);
-
+    $formatted_phone = validateAndFormatPhone($phone);
+    if ($formatted_phone === false) {
+        $error_msg .= "The phone number is in an incorrect format.<br>";
+    }
     if (empty($name)) {
         $error_msg .= "Name is required.<br>";
       } elseif(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
