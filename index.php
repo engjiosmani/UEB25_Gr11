@@ -1,5 +1,18 @@
 <?php
+function update_visitor_count() {
+    $file = 'visitors.txt';
+    $count = 1;
+    
+    if (file_exists($file)) {
+        $count = (int)file_get_contents($file);
+        $count++;
+    }
+    
+    file_put_contents($file, $count);
+    return $count;
+}
 
+$visitor_count = update_visitor_count();
 $sort_preference = 'default';
 function set_sort_preference() {
     global $sort_preference; 
