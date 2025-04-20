@@ -1,15 +1,15 @@
 <?php
 class User {
     public $fullname;
-    private $email;
+    protected $email;
     private $password;
-    public $birthday;
+    public $dob;
 
-    public function __construct($fullname, $email, $password, $birthday) {
+    public function __construct($fullname, $email, $password, $dob) {
         $this->fullname = $fullname;
         $this->email = $email;
         $this->password = $password;
-        $this->birthday = $birthday;
+        $this->dob = $dob;
     }
 
     public function getEmail() {
@@ -32,15 +32,16 @@ class User {
         echo "Përdoruesi u regjistrua me sukses!<br>";
         echo "Emri i plotë: $this->fullname <br>";
         echo "Email:" . $this->getEmail() ." <br>";
-        echo "Data e lindjes: $this->birthday <br>";
+        echo "Data e lindjes: $this->dob <br>";
     }
 
     public function login($email, $password) {
-        if ($this->getEmail() === $email && $this->getPassword() === $password) {
-            echo "Kyçja me sukses! Mirë se vini, $this->fullname";
-        } else {
-            echo "Email ose fjalëkalim i gabuar.";
-        }
+        return $this->getEmail() === $email && $this->getPassword() === $password;
     }
+    public function getName() {
+        return $this->fullname;
+    }
+    
+    
 }
 ?>

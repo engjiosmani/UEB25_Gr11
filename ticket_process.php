@@ -2,14 +2,14 @@
 define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
 define("MAX_TICKETS", 10);
-function formatPhoneNumber($phone) {
-    $phone = preg_replace("/\D/", "", $phone);
-
-    if (preg_match("/^(\d{3})(\d{3})(\d{3})$/", $phone, $matches)) {
-        return $matches[1] . '-' . $matches[2] . '-' . $matches[3];
+function  validateAndFormatPhone($phone) {
+    $phone = preg_replace("/\s+/", "", $phone);
+    if (preg_match("/^\d{9}$/", $phone)) {
+        // Formatim me viza: xxx-xxx-xxx
+        return substr($phone, 0, 3) . '-' . substr($phone, 3, 3) . '-' . substr($phone, 6, 3);
+    } else {
+        return false; // nuk është valid
     }
-
-    return $phone; 
 }
 function calculateTotalPrice($ticket_type, $num_tickets) {
     switch ($ticket_type) {
@@ -27,12 +27,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['ticket-form-email'];
     $phone = $_POST['ticket-form-phone'];
     $ticket_type = $_POST['TicketForm'] ?? 'Not selected';
-    $num_tickets = $_POST['ticket-form-number'];
+    $num_tickets = (int)$_POST['ticket-form-number'];
     $message = $_POST['ticket-form-message'];
 
     $error_msg = ''; 
 
-    $formatted_phone = formatPhoneNumber($phone);
+    $formatted_phone = validateAndFormatPhone($phone);
+    if ($formatted_phone === false) {
+        $error_msg .= "The phone number is in an incorrect format.<br>";
+    }
+    if (empty($name)) {
+        $error_msg .= "Name is required.<br>";
+      } elseif(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
+        $error_msg .= "Name can only contain letters and spaces.<br>";
+    }
+    
+      if (empty($email)) {
+        $error_msg .= "Email is required.<br>";
+    } elseif(!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email)) {
+        $error_msg .= "Please enter a valid email address.<br>";
+    }
 
     if (empty($num_tickets)) {
         $error_msg .= "The number of tickets is required.<br>";
@@ -63,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var_dump($order_details);
         echo "</pre>";
 
-        // Sortimet
         $sorted = $order_details;
         sort($sorted);
         echo "<pre>sort():\n";
@@ -81,25 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<pre>asort():\n";
         print_r($sorted);
         echo "</pre>";
-
-        $sorted = $order_details;
-        arsort($sorted);
-        echo "<pre>arsort():\n";
-        print_r($sorted);
-        echo "</pre>";
-
-        $sorted = $order_details;
-        ksort($sorted);
-        echo "<pre>ksort():\n";
-        print_r($sorted);
-        echo "</pre>";
-
-        $sorted = $order_details;
-        krsort($sorted);
-        echo "<pre>krsort():\n";
-        print_r($sorted);
-        echo "</pre>";
-
+        
     } else {
         echo "<p style='color:red;'>$error_msg</p>";
     }

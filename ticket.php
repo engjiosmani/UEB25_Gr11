@@ -115,8 +115,8 @@
                                     </div>
                                 </div>
 
-                                <input type="tel" class="form-control" name="ticket-form-phone"
-                                    placeholder="049 123 456" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required="">
+                                <input type="tel" class="form-control" name="ticket-form-phone" pattern="\d{9}"
+                                    placeholder="049123456"required>
 
                                 <h6>Choose Ticket Type</h6>
 
@@ -125,9 +125,9 @@
                                         <div class="form-check form-control">
                                             <input class="form-check-input" type="radio" name="TicketForm"
                                                 id="flexRadioDefault1"
-                                                value="Early Bird">
-                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                Eary bird $120
+                                                value="Early Bird" required checked>
+                                            <label class="form-check-label" for="flexRadioDefault1" >
+                                                Early bird $120
                                             </label>
                                         </div>
                                     </div>
@@ -135,7 +135,7 @@
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-check form-check-radio form-control">
                                             <input class="form-check-input" type="radio" name="TicketForm"
-                                                id="flexRadioDefault2"  value="Standard">
+                                                id="flexRadioDefault2"  value="Standard" required>
                                             <label class="form-check-label" for="flexRadioDefault2">
                                                 Standard $240
                                             </label>
