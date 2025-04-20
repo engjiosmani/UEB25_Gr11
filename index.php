@@ -2,12 +2,12 @@
 function update_visitor_count() {
     $file = 'visitors.txt';
     $count = 1;
-    
-    if (file_exists($file)) {
-        $count = (int)file_get_contents($file);
-        $count++;
+    if (!file_exists($file)) {
+        $count = 1;
+    } else {
+        $count = (int)file_get_contents($file) + 1;
     }
-    
+
     file_put_contents($file, $count);
     return $count;
 }
