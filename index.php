@@ -629,11 +629,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                                 </button>
                             </div>
                         </nav>
-
                         <div class="tab-content shadow-lg mt-5" id="nav-tabContent">
                             <div class="tab-pane fade show active" id="nav-ContactForm" role="tabpanel"
                                 aria-labelledby="nav-ContactForm-tab">
-                                <form class="custom-form contact-form mb-5 mb-lg-0" action="#" method="post"
+                                <form class="custom-form contact-form mb-5 mb-lg-0" action="contact.php" method="post"
                                     role="form">
                                     <div class="contact-form-body">
                                         <div class="row">
