@@ -29,6 +29,10 @@ function calculateTotalPrice($ticket_type, $num_tickets) {
 function &getTicketCountRef(&$order) {
     return $order['num_tickets'];
 }
+function ndryshoNumrinBiletave(&$num_tickets, $vlera_re) {
+    $num_tickets = $vlera_re;
+}
+
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -81,7 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         echo "<h2>Thank you, $name!</h2>";
         echo "<p>You have ordered $num_tickets ticket(s) for the $ticket_type category.</p>";
-         echo "<p><b>Numri i biletave pas ndryshimit përmes referencës: {$order_details['num_tickets']}</b></p>";
+        echo "<p><b>Numri i biletave pas ndryshimit përmes referencës: {$order_details['num_tickets']}</b></p>";
+        ndryshoNumrinBiletave($order_details['num_tickets'], 8);
+        echo "<p><b>Numri i biletave pas ndryshimit me funksion që merr referencë: {$order_details['num_tickets']}</b></p>";
 
         echo "<p>Total price: $" . $total_price . "</p>";
         echo "<p>Your formatted phone number is: $formatted_phone</p>";
