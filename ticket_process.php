@@ -2,6 +2,8 @@
 define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
 define("MAX_TICKETS", 10);
+
+
 function  validateAndFormatPhone($phone) {
     $phone = preg_replace("/\s+/", "", $phone);
     if (preg_match("/^\d{9}$/", $phone)) {
@@ -21,6 +23,11 @@ function calculateTotalPrice($ticket_type, $num_tickets) {
             return 0;
     }
 }
+// Funksion që kthen referencë te numri i biletave në array-n $order_details
+function &getTicketCountRef(&$order) {
+    return $order['num_tickets'];
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['ticket-form-name'];
@@ -67,9 +74,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'num_tickets' => $num_tickets,
             'total_price' => $total_price
         );
+        $ticketsRef = &getTicketCountRef($order_details);
    
         echo "<h2>Thank you, $name!</h2>";
         echo "<p>You have ordered $num_tickets ticket(s) for the $ticket_type category.</p>";
+         echo "<p><b>Numri i biletave pas ndryshimit përmes referencës: {$order_details['num_tickets']}</b></p>";
+
         echo "<p>Total price: $" . $total_price . "</p>";
         echo "<p>Your formatted phone number is: $formatted_phone</p>";
 
