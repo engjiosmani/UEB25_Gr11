@@ -1,18 +1,5 @@
 <?php
-function update_visitor_count() {
-    $file = 'visitors.txt';
-    $count = 1;
-    if (!file_exists($file)) {
-        $count = 1;
-    } else {
-        $count = (int)file_get_contents($file) + 1;
-    }
-
-    file_put_contents($file, $count);
-    return $count;
-}
-
-$visitor_count = update_visitor_count();
+session_start();
 $sort_preference = 'default';
 function set_sort_preference() {
     global $sort_preference; 
@@ -105,11 +92,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                         </p>
         
                         
-                        <a href="login.php" class="ms-auto d-flex align-items-center text-dark text-decoration-none">
-                            <i class="bi bi-person-circle me-1 fs-5"></i>
-                            <span class="fw-bold">Login</span>
-                        </a>
-        
+                       <?php if (isset($_SESSION['fullname'])): ?>
+    <div class="ms-auto d-flex align-items-center">
+        <span class="text-dark me-2">Hello, <?php echo $_SESSION['fullname']; ?></span>
+        <a href="logout.php" class="text-danger text-decoration-none fw-bold">Logout</a>
+    </div>
+<?php else: ?>
+    <a href="login.php" class="ms-auto d-flex align-items-center text-dark text-decoration-none">
+        <i class="bi bi-person-circle me-1 fs-5"></i>
+        <span class="fw-bold">Login</span>
+    </a>
+<?php endif; ?>
+
         
                     </div>
                 </div>

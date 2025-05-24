@@ -1,39 +1,63 @@
 <?php
+require_once 'db_conn.php';
 require_once 'klasat/User.php';
 require_once 'klasat/Admin.php';
 
-// testim i nje user apo admin 
-$dummyUser = new User("Edonita Gashi", "edonita@example.com", password_hash("1234", PASSWORD_DEFAULT), "2003-05-20");
-$dummyAdmin = new Admin("Engji Osmani", "engji@example.com", password_hash("admin123", PASSWORD_DEFAULT), "2000-10-04");
+session_start();
 
-$email = $password = '';
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-  $loginSuccess = false;
+    // Kontrollo në databazë për përdoruesin me këtë email
+    $stmt = $conn->prepare("SELECT fullname, email, password, dob, role FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // test user login
-    if ($dummyUser->getEmail() === $email && password_verify($password, $dummyUser->getPassword())) {
-      $loginSuccess = true;
-      $message = "<div style='color:green; text-align:center;'>User login success! Welcome, {$dummyUser->fullname}</div>";
-  }
+    // Nëse ekziston përdoruesi
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
 
-    // test admin login nese user ka fail
-    elseif ($dummyAdmin->getEmail() === $email && password_verify($password, $dummyAdmin->getPassword())) {
-      $loginSuccess = true;
-      $adminInfo = $dummyAdmin->displayAdminInfo(true); 
-      $message = "<div style='color:green; text-align:center;'>Admin login success! Welcome, {$dummyAdmin->fullname}</div><br>$adminInfo";
-  }
+      
+        if (password_verify($password, $row['password'])) {
+            $fullname = $row['fullname'];
+            $dob = $row['dob'];
+            $role = $row['role'];
 
-    // nese login fail edhe per user edhe per admin
-    if (!$loginSuccess) {
-      $message = "<div style='color:red; text-align:center;'>Incorrect email or password.</div>";
-  }
+            
+            if ($role === 'admin') {
+                $user = new Admin($fullname, $email, $row['password'], $dob);
+                $_SESSION['role'] = 'admin';
+                $_SESSION['fullname'] = $user->fullname;
+               header("Location: index.php");
+exit();
+
+          
+            } else {
+                $user = new User($fullname, $email, $row['password'], $dob);
+                $_SESSION['role'] = 'user';
+                $_SESSION['fullname'] = $user->fullname;
+                header("Location: index.php");
+exit();
+
+      
+            }
+
+        
+        } else {
+            $message = "<div style='color:red; text-align:center;'>Incorrect password.</div>";
+        }
+    } else {
+        $message = "<div style='color:red; text-align:center;'>Email not found.</div>";
+    }
+
+    $stmt->close();
 }
 ?>
+
 
 
 <!DOCTYPE html>
