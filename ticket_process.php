@@ -75,7 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'total_price' => $total_price
         );
         $ticketsRef = &getTicketCountRef($order_details);
-   
+        unset($ticketsRef);
+
         echo "<h2>Thank you, $name!</h2>";
         echo "<p>You have ordered $num_tickets ticket(s) for the $ticket_type category.</p>";
          echo "<p><b>Numri i biletave pas ndryshimit përmes referencës: {$order_details['num_tickets']}</b></p>";
