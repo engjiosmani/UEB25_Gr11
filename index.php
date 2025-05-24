@@ -1,5 +1,8 @@
 <?php
+require_once 'error_handler.php';
+
 session_start();
+
 $sort_preference = 'default';
 function set_sort_preference() {
     global $sort_preference; 

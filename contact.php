@@ -1,4 +1,6 @@
 <?php
+require_once 'error_handler.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["contact-name"];
     $email = $_POST["contact-email"];

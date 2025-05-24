@@ -1,4 +1,6 @@
 <?php
+require_once 'error_handler.php';
+
 define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
 define("MAX_TICKETS", 10);

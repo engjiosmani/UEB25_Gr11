@@ -2,8 +2,13 @@
 require_once 'db_conn.php';
 require_once 'klasat/User.php';
 require_once 'klasat/Admin.php';
+require_once 'error_handler.php';
+
+
 
 session_start();
+
+
 
 $message = "";
 

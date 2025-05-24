@@ -2,6 +2,7 @@
 require_once 'klasat/User.php';
 require_once 'klasat/Admin.php';
 require_once 'db_conn.php';
+require_once 'error_handler.php';
 
 $messages = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
