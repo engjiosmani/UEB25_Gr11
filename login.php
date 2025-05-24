@@ -32,18 +32,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $user = new Admin($fullname, $email, $row['password'], $dob);
                 $_SESSION['role'] = 'admin';
                 $_SESSION['fullname'] = $user->fullname;
+                $_SESSION['user'] = &$user; //assign by reference
                header("Location: index.php");
-exit();
-
-          
+               exit();
             } else {
                 $user = new User($fullname, $email, $row['password'], $dob);
                 $_SESSION['role'] = 'user';
                 $_SESSION['fullname'] = $user->fullname;
+                 $_SESSION['user'] = &$user; 
                 header("Location: index.php");
-exit();
-
-      
+                exit();
             }
 
         
