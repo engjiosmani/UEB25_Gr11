@@ -80,6 +80,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'num_tickets' => $num_tickets,
             'total_price' => $total_price
         );
+        if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$_SESSION['last_order'] = [
+    'type' => $ticket_type,
+    'quantity' => $num_tickets,
+    'total' => $total_price
+];
+
+setcookie('last_ticket', $ticket_type, time() + (86400 * 30), "/");
+
         $ticketsRef = &getTicketCountRef($order_details);
         unset($ticketsRef);
 

@@ -1,6 +1,6 @@
 <?php
 
-function error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
+function error_handler($errno, $errstr, $errfile, $errline ) {
     $gabimet = [
         E_ERROR             => "Gabim fatal (E_ERROR)",
         E_WARNING           => "Vërejtje (E_WARNING)",

@@ -86,6 +86,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("ssssss", $name, $email, $hashedPassword, $dob, $phone, $role);
 
         if ($stmt->execute()) {
+          setcookie('new_user', '1', time() + (86400 * 1), "/");
+
             ob_start();
             $user->displayInfo();
             $output = ob_get_clean();

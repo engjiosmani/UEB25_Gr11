@@ -1,7 +1,25 @@
 <?php
 require_once 'db_conn.php';
 require_once 'error_handler.php';
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Numërimi i vizitave me SESSION
+if (!isset($_SESSION['visit_count'])) {
+    $_SESSION['visit_count'] = 1;
+} else {
+    $_SESSION['visit_count']++;
+}
+
+// Ndryshimi i temës përmes COOKIE
+if (isset($_POST['theme_toggle'])) {
+    $theme = (isset($_COOKIE['theme']) && $_COOKIE['theme'] === 'dark') ? 'light' : 'dark';
+    setcookie('theme', $theme, time() + (86400 * 30), "/");
+    header("Refresh:0");
+    exit();
+}
+$theme = $_COOKIE['theme'] ?? 'light';
 
 $sort_preference = 'default';
 function set_sort_preference() {
@@ -80,7 +98,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     <link href="css/bootstrap-icons.css" rel="stylesheet">
 
     <link href="css/templatemo-festava-live.css" rel="stylesheet">
-
+<style>
+<?php if ($theme === 'dark'): ?>
+    body { background-color: #222; color: #fff; }
+    .section-padding, .hero-section { background-color: #333 !important; }
+<?php endif; ?>
+</style>
 
 </head>
 
@@ -96,11 +119,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                         <p class="d-flex mb-0 align-items-center">
                             <strong class="text-dark">Welcome to Music Festival 2023</strong>
                         </p>
-        
+        <form method="post" class="ms-auto me-3">
+    <button type="submit" name="theme_toggle" class="btn btn-sm btn-outline-secondary">
+        <i class="bi <?= ($theme === 'dark' ? 'bi-sun' : 'bi-moon') ?>"></i>
+    </button>
+</form>
                         
                        <?php if (isset($_SESSION['fullname'])): ?>
     <div class="ms-auto d-flex align-items-center">
         <span class="text-dark me-2">Hello, <?php echo $_SESSION['fullname']; ?></span>
+<?php if (isset($_COOKIE['user_email'])): ?>
+   
+<?php endif; ?>
+
         <a href="logout.php" class="text-danger text-decoration-none fw-bold">Logout</a>
     </div>
 <?php else: ?>
@@ -802,7 +833,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                 </div>
             </div>
         </div>
-        
+         <div class="text-center small text-muted">
+    Kjo faqe është vizituar <?= $_SESSION['visit_count'] ?> herë
+</div>
     </footer>
 
     <!-- JAVASCRIPT FILES -->
@@ -819,6 +852,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         }
     </script>
 
+<?php 
+ if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['last_order'])) {
+    echo "<div class='alert alert-success text-center'>";
+echo "Porosia e fundit: " . $_SESSION['last_order']['quantity'] . " x " . $_SESSION['last_order']['type'] . " për $" . $_SESSION['last_order']['total'];
+    echo "</div>";
+}
+if (isset($_COOKIE['last_ticket'])) {
+    echo "<div class='alert alert-info text-center'>";
+    echo "Bileta e fundit e porositur ishte: " . htmlspecialchars($_COOKIE['last_ticket']);
+    echo "</div>";
+} ?>
 </body>
 
 </html>

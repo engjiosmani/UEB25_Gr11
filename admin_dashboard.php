@@ -4,8 +4,13 @@ session_start();
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
-    exit();
-}
+    exit();}
+
+   $_SESSION['last_admin_action'] = [
+    'action' => 'access_dashboard',
+    'time' => date('Y-m-d H:i:s')
+];
+
 
 
 if (isset($_GET['id'])) {
@@ -95,6 +100,11 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 sidebar">
+      <?php if (isset($_SESSION['last_admin_action'])): ?>
+      <div class="alert alert-info mt-4 mx-3">
+          Last action: <?= $_SESSION['last_admin_action']['action'] ?> at <?= $_SESSION['last_admin_action']['time'] ?>
+      </div>
+  <?php endif; ?>
       <h2>Admin Panel</h2>
       <a href="#messages" class="active"><i class="bi bi-envelope"></i> Messages</a>
       <a href="#users"><i class="bi bi-people"></i> Users</a>

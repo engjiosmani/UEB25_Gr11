@@ -31,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $fullname = $row['fullname'];
             $dob = $row['dob'];
             $role = $row['role'];
+           setcookie('user_email', $email, time() + (86400 * 7), "/"); // kujton përdoruesin për 1 javë
 
             
            if ($role === 'admin') {
