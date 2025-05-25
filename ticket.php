@@ -86,6 +86,10 @@
                     </ul>
 
                     <a href="ticket.php" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
+                       <a href="login.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
+                    <i class="bi bi-person-circle me-1 fs-5"></i>
+                    <span class="fw-bold">Login</span>
+                </a>
                 </div>
             </div>
         </nav>
@@ -152,6 +156,10 @@
                                 <div class="col-lg-4 col-md-10 col-8 mx-auto">
                                     <button type="submit" class="form-control">Buy Ticket</button>
                                 </div>
+                                   <a href="login.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
+                    <i class="bi bi-person-circle me-1 fs-5"></i>
+                    <span class="fw-bold">Login</span>
+                </a>
                             </div>
                         </form>
                     </div>

@@ -125,7 +125,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="css/templatemo-festava-live.css" rel="stylesheet">
   <style>
     body {
-         background: linear-gradient(135deg, #f5cf97, #ff6126);
+     background: 
+        linear-gradient(135deg, rgba(245,207,151,0.75), rgba(255,97,38,0.75)),
+        url('images/nicholas-green-unsplash-blur.jpg') no-repeat center center fixed;
+    background-size: cover;
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
     }
@@ -300,7 +303,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
           <button type="submit" class="btn btn-register w-100">Register</button>
           <div class="extra-links">
-            <a href="index.php">← Back to Home</a>
             <a href="login.php">Already have an account? Login</a>
           </div>
         </form>

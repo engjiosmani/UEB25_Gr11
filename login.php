@@ -87,7 +87,10 @@ else {
     <link href="css/templatemo-festava-live.css" rel="stylesheet">
   <style>
    body {
-    background: linear-gradient(135deg, #f5cf97, #ff6126);
+     background: 
+        linear-gradient(135deg, rgba(245,207,151,0.75), rgba(255,97,38,0.75)),
+        url('images/nicholas-green-unsplash-blur.jpg') no-repeat center center fixed;
+    background-size: cover;
     min-height: 100vh;
     font-family: 'Arial', sans-serif;
 }
@@ -171,7 +174,7 @@ else {
 
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="index.php">Festava Live</a>
+        <a class="navbar-brand" href="index.php" >Festava Live</a>
         <a href="ticket.php" class="btn custom-btn d-lg-none ms-auto me-4">Buy Ticket</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -222,7 +225,6 @@ else {
           </div>
           <button type="submit" name="login" class="btn btn-login w-100">Login</button>
           <div class="extra-links">
-            <a href="index.php">← Back to Home</a>
             <a href="register.php">Create Account</a>
           </div>
         </form>
