@@ -390,8 +390,10 @@ if (isset($_SESSION['ticket_error'])) {
                 'Rihana' => ['age' => 35, 'genre' => 'R&B', 'image' => 'rihannaa.avif'],
                 'Bruno Mars' => ['age' => 38, 'genre' => 'Pop', 'image' => 'brunomars.jpg']
             ];
+            
+            $firstArtist = &$artists['Madona'];
+            $firstArtist['age'] = 70;
 
-    
             $sort_type = $_GET['sort'] ?? 'name_asc';
 
             switch ($sort_type) {
