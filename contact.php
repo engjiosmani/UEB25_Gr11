@@ -40,6 +40,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
         if ($stmt->execute()) {
             $_SESSION['message_sent'] = true;
+            // === LOGIMI NË FAJLL: contact_log.txt ===
+            if (!file_exists('logs')) {
+                mkdir('logs', 0777, true);
+            }
+
+            $contactLog = fopen("logs/contact_log.txt", "a");
+            $timestamp = date("Y-m-d H:i:s");
+            $logEntry = "[$timestamp] Perd: $user_id | Kompania: $company | Mesazh: $message_cleaned\n";
+            fwrite($contactLog, $logEntry);
+            fclose($contactLog);
+            // =========================================
+
             header("Location: index.php#section_6");
             exit;
         }
@@ -48,4 +60,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         echo "<div class='alert alert-danger text-center'>Nuk u dërgua mesazhi.</div>";
     }
 }
-?>
