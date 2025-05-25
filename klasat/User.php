@@ -1,16 +1,25 @@
 <?php
 class User {
-    public $fullname;
-    protected $email;
-    private $password;
-    public $dob;
+   
+    public int $id;
+    public string $fullname;
+    protected string $email;
+    private string $password;
+    public string $phone;
 
-    public function __construct($fullname, $email, $password, $dob) {
-        $this->fullname = $fullname;
-        $this->email = $email;
-        $this->password = $password;
-        $this->dob = $dob;
-    }
+    public string $dob;
+
+    public function __construct($fullname, $email, $password, $dob, $phone) {
+    $this->fullname = $fullname;
+    $this->email = $email;
+    $this->password = $password;
+    $this->dob = $dob;
+    $this->phone = $phone;
+}
+
+public function getPhone() {
+    return $this->phone;
+}
 
     public function getEmail() {
         return $this->email;
@@ -27,14 +36,6 @@ class User {
     public function setPassword($password) {
         $this->password = $password;
     }
-
-    public function displayInfo() {
-        echo "Përdoruesi u regjistrua me sukses!<br>";
-        echo "Emri i plotë: $this->fullname <br>";
-        echo "Email:" . $this->getEmail() ." <br>";
-        echo "Data e lindjes: $this->dob <br>";
-    }
-
     public function login($email, $password) {
         return $this->getEmail() === $email && $this->getPassword() === $password;
     }

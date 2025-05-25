@@ -1,6 +1,18 @@
 <?php
 session_start();
-session_unset(); // e pastron te gjitha variablat e sesionit
-session_destroy(); // e shkaterron sesionin
-header("Location: index.php"); // ridrejton në home pas logout
+
+// Fshij të gjitha variablat e sesionit
+$_SESSION = [];
+
+// Fshij cookie nëse ekziston
+if (isset($_COOKIE['user_email'])) {
+    setcookie('user_email', '', time() - 3600, "/"); // skado cookie
+}
+
+// Unset dhe destroy sesionin
+session_unset();
+session_destroy();
+
+// Ridrejto në faqen kryesore
+header("Location: index.php");
 exit();

@@ -4,11 +4,7 @@ require_once 'klasat/User.php';
 require_once 'klasat/Admin.php';
 require_once 'error_handler.php';
 
-
-
 session_start();
-
-
 
 $message = "";
 
@@ -16,42 +12,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // Kontrollo në databazë për përdoruesin me këtë email
-    $stmt = $conn->prepare("SELECT fullname, email, password, dob, role FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, fullname, email, password, dob, phone, role FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Nëse ekziston përdoruesi
     if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
 
-      
         if (password_verify($password, $row['password'])) {
+            $id = $row['id'];
             $fullname = $row['fullname'];
             $dob = $row['dob'];
+            $phone = $row['phone'];
             $role = $row['role'];
-           setcookie('user_email', $email, time() + (86400 * 7), "/"); // kujton përdoruesin për 1 javë
 
-            
-           if ($role === 'admin') {
-    $user = new Admin($fullname, $email, $row['password'], $dob);
-    $_SESSION['role'] = 'admin';
-    $_SESSION['fullname'] = $user->fullname;
-    $_SESSION['user'] = &$user;
-    header("Location: admin_dashboard.php"); // ← dërgon tek paneli admin
-    exit();
-}
-else {
-                $user = new User($fullname, $email, $row['password'], $dob);
+            setcookie('user_email', $email, time() + (86400 * 7), "/"); // kujton emailin për 1 javë
+
+            if ($role === 'admin') {
+                $user = new Admin($fullname, $email, $row['password'], $dob, $phone);
+                $user->id = $id;
+                $_SESSION['role'] = 'admin';
+            } else {
+                $user = new User($fullname, $email, $row['password'], $dob, $phone);
+                $user->id = $id;
                 $_SESSION['role'] = 'user';
-                $_SESSION['fullname'] = $user->fullname;
-                 $_SESSION['user'] = &$user; 
-                header("Location: index.php");
-                exit();
             }
 
-        
+            $_SESSION['fullname'] = $fullname;
+            $_SESSION['user'] = &$user;
+
+            header("Location: " . ($role === 'admin' ? "admin_dashboard.php" : "index.php"));
+            exit();
         } else {
             $message = "<div style='color:red; text-align:center;'>Incorrect password.</div>";
         }
@@ -62,6 +54,8 @@ else {
     $stmt->close();
 }
 ?>
+
+
 
 
 

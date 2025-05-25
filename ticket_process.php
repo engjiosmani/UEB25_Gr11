@@ -1,20 +1,29 @@
 <?php
 require_once 'error_handler.php';
+require_once 'klasat/User.php';
+require_once 'db_conn.php';
 
 define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
 define("MAX_TICKETS", 10);
 
-
-function  validateAndFormatPhone($phone) {
-    $phone = preg_replace("/\s+/", "", $phone);
-    if (preg_match("/^\d{9}$/", $phone)) {
-        // Formatim me viza: xxx-xxx-xxx
-        return substr($phone, 0, 3) . '-' . substr($phone, 3, 3) . '-' . substr($phone, 6, 3);
-    } else {
-        return false; // nuk është valid
+function validateAndFormatPhone($phone) {
+    $digitsOnly = preg_replace("/\D+/", "", $phone);
+    if (str_starts_with($digitsOnly, "383")) {
+        $digitsOnly = substr($digitsOnly, 3);
     }
+    if (preg_match("/^\d{6,9}$/", $digitsOnly)) {
+        if (strlen($digitsOnly) === 9) {
+            return substr($digitsOnly, 0, 3) . '-' . substr($digitsOnly, 3, 3) . '-' . substr($digitsOnly, 6, 3);
+        } elseif (strlen($digitsOnly) === 6) {
+            return substr($digitsOnly, 0, 3) . '-' . substr($digitsOnly, 3, 3);
+        } else {
+            return $digitsOnly;
+        }
+    }
+    return false;
 }
+
 function calculateTotalPrice($ticket_type, $num_tickets) {
     switch ($ticket_type) {
         case 'Early Bird':
@@ -25,109 +34,62 @@ function calculateTotalPrice($ticket_type, $num_tickets) {
             return 0;
     }
 }
-// Funksion që kthen referencë te numri i biletave në array-n $order_details
-function &getTicketCountRef(&$order) {
-    return $order['num_tickets'];
-}
-function ndryshoNumrinBiletave(&$num_tickets, $vlera_re) {
-    $num_tickets = $vlera_re;
-}
 
-
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['ticket-form-name'];
-    $email = $_POST['ticket-form-email'];
-    $phone = $_POST['ticket-form-phone'];
-    $ticket_type = $_POST['TicketForm'] ?? 'Not selected';
-    $num_tickets = (int)$_POST['ticket-form-number'];
-    $message = $_POST['ticket-form-message'];
-
-    $error_msg = ''; 
-
-    $formatted_phone = validateAndFormatPhone($phone);
-    if ($formatted_phone === false) {
-        $error_msg .= "The phone number is in an incorrect format.<br>";
-    }
-    if (empty($name)) {
-        $error_msg .= "Name is required.<br>";
-      } elseif(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
-        $error_msg .= "Name can only contain letters and spaces.<br>";
-    }
-    
-      if (empty($email)) {
-        $error_msg .= "Email is required.<br>";
-    } elseif(!preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email)) {
-        $error_msg .= "Please enter a valid email address.<br>";
-    }
-
-    if (empty($num_tickets)) {
-        $error_msg .= "The number of tickets is required.<br>";
-    } elseif (!preg_match("/^[1-9]$|^10$/", $num_tickets)) {
-        $error_msg .= "The number of tickets must be between 1 and 10.<br>";
-    }
-
-    if (empty($ticket_type)) {
-        $error_msg .= "Please select a ticket type.<br>";
-    }
-    if (empty($error_msg)) {
-        $total_price = calculateTotalPrice($ticket_type, $num_tickets);
-        $order_details = array(
-            'customer_name' => strtoupper($name), 
-            'email' => $email,
-            'phone' => $formatted_phone,
-            'ticket_type' => $ticket_type,
-            'num_tickets' => $num_tickets,
-            'total_price' => $total_price
-        );
-        if (session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$_SESSION['last_order'] = [
-    'type' => $ticket_type,
-    'quantity' => $num_tickets,
-    'total' => $total_price
-];
+$user = $_SESSION['user'] ?? null;
+if (!$user) {
+    echo "<p style='color:red;'>User session missing.</p>";
+    exit();
+}
 
-setcookie('last_ticket', $ticket_type, time() + (86400 * 30), "/");
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $user->fullname ?? '';
+    $email = $user->getEmail() ?? '';
+    $phone = $user->phone ?? '';
+    $ticket_type = $_POST['ticket_type'] ?? '';
+    $num_tickets = $_POST['num_tickets'] ?? '';
+    $message = $_POST['message'] ?? '';
 
-        $ticketsRef = &getTicketCountRef($order_details);
-        unset($ticketsRef);
+    $errors = [];
 
-        echo "<h2>Thank you, $name!</h2>";
-        echo "<p>You have ordered $num_tickets ticket(s) for the $ticket_type category.</p>";
-        echo "<p><b>Numri i biletave pas ndryshimit përmes referencës: {$order_details['num_tickets']}</b></p>";
-        ndryshoNumrinBiletave($order_details['num_tickets'], 8);
-        echo "<p><b>Numri i biletave pas ndryshimit me funksion që merr referencë: {$order_details['num_tickets']}</b></p>";
-
-        echo "<p>Total price: $" . $total_price . "</p>";
-        echo "<p>Your formatted phone number is: $formatted_phone</p>";
-
-        echo "<pre>Order details: ";
-        var_dump($order_details);
-        echo "</pre>";
-
-        $sorted = $order_details;
-        sort($sorted);
-        echo "<pre>sort():\n";
-        print_r($sorted);
-        echo "</pre>";
-
-        $sorted = $order_details;
-        rsort($sorted);
-        echo "<pre>rsort():\n";
-        print_r($sorted);
-        echo "</pre>";
-
-        $sorted = $order_details;
-        asort($sorted);
-        echo "<pre>asort():\n";
-        print_r($sorted);
-        echo "</pre>";
-        
-    } else {
-        echo "<p style='color:red;'>$error_msg</p>";
+    $formatted_phone = validateAndFormatPhone($phone);
+    if (!$formatted_phone) $errors[] = "Phone format invalid.";
+    if (empty($name)) $errors[] = "Name is required.";
+    if (empty($email)) $errors[] = "Email is required.";
+    if (empty($num_tickets)) {
+        $errors[] = "Number of tickets is required.";
+    } elseif (!preg_match("/^[1-9]$|^10$/", $num_tickets)) {
+        $errors[] = "Tickets must be between 1 and 10.";
     }
+    if (empty($ticket_type)) $errors[] = "Ticket type is required.";
+
+    if (!empty($errors)) {
+        echo "<div style='color:red;'>";
+        foreach ($errors as $e) echo $e . "<br>";
+        echo "</div>";
+        exit();
+    }
+
+    $total_price = calculateTotalPrice($ticket_type, $num_tickets);
+    $stmt = $conn->prepare("INSERT INTO tickets (user_id, ticket_type, num_tickets, message, total_price) VALUES (?, ?, ?, ?, ?)");
+    $user_id = $user->id;
+    $stmt->bind_param("isisd", $user_id, $ticket_type, $num_tickets, $message, $total_price);
+    $stmt->execute();
+
+   if ($stmt->affected_rows > 0) {
+    $_SESSION['ticket_success'] = "Thank you, {$name}! You purchased {$num_tickets} ticket(s) for <strong>{$ticket_type}</strong>. Total: \${$total_price}.";
+    header("Location: index.php"); 
+    exit();
+} else {
+    $_SESSION['ticket_error'] = "Ticket could not be saved.";
+    header("Location: ticket.php");
+    exit();
+}
+
+
+    $stmt->close();
 }
 ?>

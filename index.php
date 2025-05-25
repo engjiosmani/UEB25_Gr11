@@ -1,6 +1,9 @@
 <?php
 require_once 'db_conn.php';
 require_once 'error_handler.php';
+require_once 'klasat/User.php';
+require_once 'klasat/Admin.php';
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -21,6 +24,7 @@ if (isset($_POST['theme_toggle'])) {
 }
 $theme = $_COOKIE['theme'] ?? 'light';
 
+// Përdorur për dropdown sorting
 $sort_preference = 'default';
 function set_sort_preference() {
     global $sort_preference;
@@ -30,6 +34,7 @@ function set_sort_preference() {
 }
 set_sort_preference();
 
+// Lexon fjalët e ndaluara
 function get_bad_words() {
     $bad_words = [];
     if (file_exists('bad_words.txt')) {
@@ -39,12 +44,21 @@ function get_bad_words() {
     return $bad_words;
 }
 
+// Procesimi i formës së kontaktit
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
-    $name = $_POST["contact-name"];
-    $email = $_POST["contact-email"];
+
+    // Mos lejo pa login
+    if (!isset($_SESSION['user'])) {
+        $_SESSION['contact_error'] = "Ju duhet të jeni të kyçur për të dërguar mesazh.";
+        header("Location: index.php#section_6");
+        exit;
+    }
+
+    $user_id = $_SESSION['user']->id;
     $company = $_POST["contact-company"];
     $message = $_POST["contact-message"];
 
+    // Pastrimi i mesazhit
     $message_cleaned = strip_tags($message);
     $message_cleaned = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}]/u', '', $message_cleaned);
     $message_cleaned = preg_replace("/[#@]\w+/", "", $message_cleaned);
@@ -58,9 +72,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     $message_cleaned = preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" rel="noopener">$1</a>', $message_cleaned);
     $message_cleaned = preg_replace('/\s+/', ' ', trim($message_cleaned));
 
-    $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, company, message) VALUES (?, ?, ?, ?)");
+    // INSERT në databazë
+    $stmt = $conn->prepare("INSERT INTO contact_messages (user_id, company, message) VALUES (?, ?, ?)");
     if ($stmt) {
-        $stmt->bind_param("ssss", $name, $email, $company, $message_cleaned);
+        $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
         if ($stmt->execute()) {
             $_SESSION['message_sent'] = true;
             header("Location: index.php#section_6");
@@ -72,6 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     }
 }
 ?>
+
 
 <!doctype html>
 <html lang="en">
@@ -108,6 +124,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 </head>
 
 <body>
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+if (isset($_SESSION['ticket_success'])) {
+    echo "<div class='alert alert-success text-center'>" . $_SESSION['ticket_success'] . "</div>";
+    unset($_SESSION['ticket_success']);
+}
+
+if (isset($_SESSION['ticket_error'])) {
+    echo "<div class='alert alert-danger text-center'>" . $_SESSION['ticket_error'] . "</div>";
+    unset($_SESSION['ticket_error']);
+}
+?>
 
     <main>
 
@@ -131,8 +160,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 <?php if (isset($_COOKIE['user_email'])): ?>
    
 <?php endif; ?>
-
-        <a href="logout.php" class="text-danger text-decoration-none fw-bold">Logout</a>
     </div>
 <?php else: ?>
   
@@ -190,9 +217,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 
                     <a href="ticket.php" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
 
-                      <a href="login.php" class="ms-auto d-flex align-items-center text-white text-decoration-none">
+                     <?php if (!isset($_SESSION['user'])): ?>
+    <a href="login.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
         <i class="bi bi-person-circle me-1 fs-5"></i>
         <span class="fw-bold">Login</span>
+    </a>
+<?php else: ?>
+   <a href="logout.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
+    <i class="bi bi-box-arrow-right me-1 fs-5"></i>
+    <span class="fw-bold">Logout</span>
+</a>
+
+<?php endif; ?>
+
     </a>
                     
 
@@ -639,72 +676,94 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         </section>
 
 
-        <section class="contact-section section-padding" id="section_6">
-            <div class="container">
-                <div class="row">
+       <section class="contact-section section-padding" id="section_6">
+    <div class="container">
+        <div class="row">
 
-                    <div class="col-lg-8 col-12 mx-auto">
-                        <h2 class="text-center mb-4">Interested? Let's talk</h2>
+            <div class="col-lg-8 col-12 mx-auto">
+                <h2 class="text-center mb-4">Interested? Let's talk</h2>
 
-                        <nav class="d-flex justify-content-center">
-                            <div class="nav nav-tabs align-items-baseline justify-content-center" id="nav-tab"
-                                role="tablist">
-                                <button class="nav-link active" id="nav-ContactForm-tab" data-bs-toggle="tab"
-                                    data-bs-target="#nav-ContactForm" type="button" role="tab"
-                                    aria-controls="nav-ContactForm" aria-selected="false">
-                                    <h5>Contact Form</h5>
-                                </button>
+                <nav class="d-flex justify-content-center">
+                    <div class="nav nav-tabs align-items-baseline justify-content-center" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-ContactForm-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-ContactForm" type="button" role="tab"
+                            aria-controls="nav-ContactForm" aria-selected="true">
+                            <h5>Contact Form</h5>
+                        </button>
 
-                                <button class="nav-link" id="nav-ContactMap-tab" data-bs-toggle="tab"
-                                    data-bs-target="#nav-ContactMap" type="button" role="tab"
-                                    aria-controls="nav-ContactMap" aria-selected="false">
-                                    <h5>Google Maps</h5>
-                                </button>
+                        <button class="nav-link" id="nav-ContactMap-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-ContactMap" type="button" role="tab"
+                            aria-controls="nav-ContactMap" aria-selected="false">
+                            <h5>Google Maps</h5>
+                        </button>
+                    </div>
+                </nav>
+
+                <div class="tab-content shadow-lg mt-5" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-ContactForm" role="tabpanel" aria-labelledby="nav-ContactForm-tab">
+                        
+                        <?php if (isset($_SESSION['message_sent']) && $_SESSION['message_sent']): ?>
+                            <div class="alert alert-success text-center" style="margin: 20px auto; width: 60%;">
+                                We have received your message. You will be informed via email soon. Thank you!
                             </div>
-                        </nav>
-                        <div class="tab-content shadow-lg mt-5" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-ContactForm" role="tabpanel" aria-labelledby="nav-ContactForm-tab">
-        <?php if (isset($_SESSION['message_sent']) && $_SESSION['message_sent']): ?>
-        <div class="alert alert-success text-center" style="margin: 20px auto; width: 60%;">
-            We have received your message. You will be informed via email soon. Thank you!
+                            <?php unset($_SESSION['message_sent']); ?>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['contact_error'])): ?>
+                            <div class="alert alert-danger text-center" style="margin: 20px auto; width: 60%;">
+                                <?= $_SESSION['contact_error']; ?>
+                            </div>
+                            <?php unset($_SESSION['contact_error']); ?>
+                        <?php endif; ?>
+
+                        <?php if (isset($_SESSION['user'])): ?>
+                        <!-- FORMULARI PËR PËRDORUES TË KYÇUR -->
+                        <form class="custom-form contact-form mb-5 mb-lg-0" action="contact.php" method="post" role="form">
+                            <div class="contact-form-body">
+
+                                <!-- KOMPANIA -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" name="contact-company" id="contact-company" class="form-control" placeholder="Company" required>
+                                    </div>
+                                </div>
+
+                                <!-- MESAZHI -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <textarea name="contact-message" rows="3" class="form-control" id="contact-message" placeholder="Message" required></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- BUTONI -->
+                                <div class="col-lg-4 col-md-10 col-8 mx-auto mt-4">
+                                    <button type="submit" class="form-control">Send message</button>
+                                </div>
+                            </div>
+                        </form>
+                        <?php else: ?>
+                            <!-- NUK LEJOHET PA LOGIN -->
+                            <div class="alert alert-warning text-center" style="margin: 20px auto; width: 60%;">
+                                You must be <a href="login.php">logged in</a> to send a message.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- GOOGLE MAPS -->
+                    <div class="tab-pane fade" id="nav-ContactMap" role="tabpanel" aria-labelledby="nav-ContactMap-tab">
+                        <iframe class="google-map"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29974.469402870927!2d120.94861466021855!3d14.106066818082482!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd777b1ab54c8f%3A0x6ecc514451ce2be8!2sTagaytay%2C%20Cavite%2C%20Philippines!5e1!3m2!1sen!2smy!4v1670344209509!5m2!1sen!2smy"
+                            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <?php unset($_SESSION['message_sent']); ?>
-    <?php endif; ?>
-        <form class="custom-form contact-form mb-5 mb-lg-0" action="contact.php" method="post" role="form">
-            <div class="contact-form-body">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-12">
-                        <input type="text" name="contact-name" id="contact-name" class="form-control" placeholder="Full name" required>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-12">
-                        <input type="email" name="contact-email" id="contact-email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required>
-                    </div>
-                </div>
-                <input type="text" name="contact-company" id="contact-company" class="form-control" placeholder="Company" required>
-                <textarea name="contact-message" rows="3" class="form-control" id="contact-message" placeholder="Message"></textarea>
-                <div class="col-lg-4 col-md-10 col-8 mx-auto">
-                    <button type="submit" class="form-control">Send message</button>
-                </div>
-            </div>
-        </form>
     </div>
-</div>
+</section>
 
 
-                            <div class="tab-pane fade" id="nav-ContactMap" role="tabpanel"
-                                aria-labelledby="nav-ContactMap-tab">
-                                <iframe class="google-map"
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29974.469402870927!2d120.94861466021855!3d14.106066818082482!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd777b1ab54c8f%3A0x6ecc514451ce2be8!2sTagaytay%2C%20Cavite%2C%20Philippines!5e1!3m2!1sen!2smy!4v1670344209509!5m2!1sen!2smy"
-                                    width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-                                
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
     </main>
 
 
@@ -869,6 +928,17 @@ if (isset($_COOKIE['last_ticket'])) {
     echo "Bileta e fundit e porositur ishte: " . htmlspecialchars($_COOKIE['last_ticket']);
     echo "</div>";
 } ?>
+<script>
+    setTimeout(function () {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function (alert) {
+            alert.style.transition = 'opacity 1s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 1000);
+        });
+    }, 5000);
+</script>
+
 </body>
 
 </html>

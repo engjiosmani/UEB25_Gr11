@@ -4,40 +4,13 @@ session_start();
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
-    exit();}
+    exit();
+}
 
-   $_SESSION['last_admin_action'] = [
+$_SESSION['last_admin_action'] = [
     'action' => 'access_dashboard',
     'time' => date('Y-m-d H:i:s')
 ];
-
-
-
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
-
-    $checkRoleQuery = "SELECT role FROM users WHERE id = ?";
-    $stmtCheck = $conn->prepare($checkRoleQuery);
-    $stmtCheck->bind_param("i", $id);
-    $stmtCheck->execute();
-    $resultCheck = $stmtCheck->get_result();
-
-    if ($resultCheck && $resultCheck->num_rows > 0) {
-        $user = $resultCheck->fetch_assoc();
-        if (strtolower($user['role']) !== 'admin') {
-            $deleteQuery = "DELETE FROM users WHERE id = ?";
-            $stmt = $conn->prepare($deleteQuery);
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-
-            if ($stmt->affected_rows > 0) {
-                header("Location: delete_user.php?deleted=true");
-                exit();
-            }
-        }
-    }
-}
-
 
 $successMessage = '';
 if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
@@ -53,47 +26,13 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
   <style>
-    body {
-      background: linear-gradient(135deg, #f5cf97, #ff6126);
-      font-family: 'Arial', sans-serif;
-      min-height: 100vh;
-    }
-    .sidebar {
-      background-color: #111;
-      padding: 20px;
-      min-height: 100vh;
-      color: white;
-    }
-    .sidebar h2 {
-      color: #fecd1a;
-      font-weight: bold;
-      margin-bottom: 30px;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      color: white;
-      text-decoration: none;
-      margin-bottom: 10px;
-      border-radius: 5px;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      background-color: #f2541b;
-    }
-    .main-content {
-      padding: 30px;
-      background-color: #fff;
-      border-radius: 20px;
-      margin: 20px;
-      box-shadow: 0 8px 20px rgba(255, 84, 27, 0.3);
-    }
-    .message-box {
-      background-color: #222;
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
+    body { background: linear-gradient(135deg, #f5cf97, #ff6126); font-family: 'Arial', sans-serif; min-height: 100vh; }
+    .sidebar { background-color: #111; padding: 20px; min-height: 100vh; color: white; }
+    .sidebar h2 { color: #fecd1a; font-weight: bold; margin-bottom: 30px; }
+    .sidebar a { display: block; padding: 10px; color: white; text-decoration: none; margin-bottom: 10px; border-radius: 5px; }
+    .sidebar a:hover, .sidebar a.active { background-color: #f2541b; }
+    .main-content { padding: 30px; background-color: #fff; border-radius: 20px; margin: 20px; box-shadow: 0 8px 20px rgba(255, 84, 27, 0.3); }
+    .message-box { background-color: #222; color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
   </style>
 </head>
 <body>
@@ -101,10 +40,10 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
   <div class="row">
     <div class="col-md-3 sidebar">
       <?php if (isset($_SESSION['last_admin_action'])): ?>
-      <div class="alert alert-info mt-4 mx-3">
+        <div class="alert alert-info mt-4 mx-3">
           Last action: <?= $_SESSION['last_admin_action']['action'] ?> at <?= $_SESSION['last_admin_action']['time'] ?>
-      </div>
-  <?php endif; ?>
+        </div>
+      <?php endif; ?>
       <h2>Admin Panel</h2>
       <a href="#messages" class="active"><i class="bi bi-envelope"></i> Messages</a>
       <a href="#users"><i class="bi bi-people"></i> Users</a>
@@ -113,13 +52,16 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
     </div>
 
     <div class="col-md-9">
-
       <?php if (!empty($successMessage)) echo $successMessage; ?>
 
+      <!-- Contact Messages -->
       <div class="main-content" id="messages">
         <h3 class="text-warning mb-4"><i class="bi bi-envelope-fill"></i> Contact Messages</h3>
         <?php
-        $msgQuery = "SELECT name, email, company, message, created_at FROM contact_messages ORDER BY created_at DESC";
+        $msgQuery = "SELECT u.fullname AS name, u.email, cm.company, cm.message, cm.created_at
+                     FROM contact_messages cm
+                     JOIN users u ON cm.user_id = u.id
+                     ORDER BY cm.created_at DESC";
         $msgResult = $conn->query($msgQuery);
         if ($msgResult && $msgResult->num_rows > 0) {
           while ($row = $msgResult->fetch_assoc()) {
@@ -137,19 +79,21 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         ?>
       </div>
 
+      <!-- Users Section -->
       <div class="main-content" id="users">
         <h3 class="text-warning mb-4"><i class="bi bi-people-fill"></i> Registered Users</h3>
         <?php
-        $userQuery = "SELECT id, fullname, email, dob, role FROM users ORDER BY id DESC";
+        $userQuery = "SELECT id, fullname, email, dob, role, phone FROM users ORDER BY id DESC";
         $userResult = $conn->query($userQuery);
         if ($userResult && $userResult->num_rows > 0) {
           echo "<table class='table table-striped'>";
-          echo "<thead class='table-dark'><tr><th>Full Name</th><th>Email</th><th>Date of Birth</th><th>Role</th><th>Action</th></tr></thead><tbody>";
+          echo "<thead class='table-dark'><tr><th>Full Name</th><th>Email</th><th>Date of Birth</th><th>Phone</th><th>Role</th><th>Action</th></tr></thead><tbody>";
           while ($user = $userResult->fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . htmlspecialchars($user['fullname']) . "</td>";
             echo "<td>" . htmlspecialchars($user['email']) . "</td>";
             echo "<td>" . $user['dob'] . "</td>";
+            echo "<td>" . htmlspecialchars($user['phone']) . "</td>";
             echo "<td>" . ucfirst($user['role']) . "</td>";
             if (strtolower($user['role']) !== 'admin') {
               echo "<td><a href='?id=" . $user['id'] . "' onclick=\"return confirm('Are you sure you want to delete this user?')\" class='btn btn-danger btn-sm'>Delete</a></td>";
@@ -165,10 +109,11 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         ?>
       </div>
 
+      <!-- Tickets Section -->
       <div class="main-content" id="tickets">
         <h3 class="text-warning mb-4"><i class="bi bi-ticket-perforated-fill"></i> Purchased Tickets</h3>
         <?php
-        $ticketQuery = "SELECT u.fullname AS user_name, t.ticket_type, t.num_tickets, t.phone, t.total_price
+        $ticketQuery = "SELECT u.fullname AS user_name, u.phone, t.ticket_type, t.num_tickets, t.total_price
                         FROM tickets t
                         JOIN users u ON t.user_id = u.id
                         ORDER BY t.id DESC";

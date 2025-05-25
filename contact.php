@@ -1,23 +1,49 @@
 <?php
 require_once 'db_conn.php';
 require_once 'error_handler.php';
+require_once 'klasat/User.php';
+require_once 'klasat/Admin.php';
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST["contact-name"];
-    $email = $_POST["contact-email"];
+if (!isset($_SESSION['user'])) {
+    $_SESSION['contact_error'] = "Duhet të jeni të kyçur për të dërguar mesazh.";
+    header("Location: index.php#section_6");
+    exit;
+}
+
+function get_bad_words() {
+    $bad_words = [];
+    if (file_exists('bad_words.txt')) {
+        $bad_words = file('bad_words.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $bad_words = array_map('trim', $bad_words);
+    }
+    return $bad_words;
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
+    $user_id = $_SESSION['user']->id;
     $company = $_POST["contact-company"];
     $message = $_POST["contact-message"];
 
-    $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, company, message) VALUES (?, ?, ?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("ssss", $name, $email, $company, $message);
-        $stmt->execute();
-        $stmt->close();
+    // Pastrim i mesazhit
+    $message_cleaned = strip_tags($message);
+    $message_cleaned = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}]/u', '', $message_cleaned);
+    $message_cleaned = preg_replace("/[#@]\w+/", "", $message_cleaned);
+    $bad_words = get_bad_words();
+    if (!empty($bad_words)) {
+        $pattern = '/\\b(' . implode('|', array_map('preg_quote', $bad_words)) . ')\\b/iu';
+        $message_cleaned = preg_replace($pattern, "***", $message_cleaned);
+    }
 
-        $_SESSION['message_sent'] = true;
-        header("Location: index.php#section_6");
-        exit;
+    $stmt = $conn->prepare("INSERT INTO contact_messages (user_id, company, message) VALUES (?, ?, ?)");
+    if ($stmt) {
+        $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
+        if ($stmt->execute()) {
+            $_SESSION['message_sent'] = true;
+            header("Location: index.php#section_6");
+            exit;
+        }
+        $stmt->close();
     } else {
         echo "<div class='alert alert-danger text-center'>Nuk u dërgua mesazhi.</div>";
     }
