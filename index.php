@@ -1031,7 +1031,7 @@ if (isset($_COOKIE['last_ticket'])) {
 } ?>
 <script>
     setTimeout(function () {
-        const alerts = document.querySelectorAll('.alert');
+        const alerts = document.querySelectorAll('.alert-success'); 
         alerts.forEach(function (alert) {
             alert.style.transition = 'opacity 1s ease';
             alert.style.opacity = '0';
