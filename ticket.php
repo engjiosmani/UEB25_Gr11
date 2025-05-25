@@ -6,14 +6,12 @@ require_once 'error_handler.php';
 
 session_start();
 
-// Kërko login për të vazhduar
 if (!isset($_SESSION['user'])) {
-    $_SESSION['ticket_error'] = "Ju duhet të jeni të kyçur për të blerë biletë.";
     header("Location: login.php");
     exit();
 }
 
-// Merr të dhënat e userit nga objekti i sesionit
+
 $user = $_SESSION['user'];
 ?>
 <!doctype html>

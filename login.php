@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $user->id = $id;
                 $_SESSION['role'] = 'admin';
             } else {
-                $user = new User($fullname, $email, $row['password'], $dob, $phone);
+                $user = new User($fullname, $email, $row['password'], $dob, $phone, $row['role']);
                 $user->id = $id;
                 $_SESSION['role'] = 'user';
             }
