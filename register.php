@@ -175,7 +175,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 .form-control::placeholder {
     color: #ccc;
     opacity: 1;
-    font-style: italic;
 }
 .btn-register {
     background-color: #f2541b;
