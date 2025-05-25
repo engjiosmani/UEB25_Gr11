@@ -135,10 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         <a href="logout.php" class="text-danger text-decoration-none fw-bold">Logout</a>
     </div>
 <?php else: ?>
-    <a href="login.php" class="ms-auto d-flex align-items-center text-dark text-decoration-none">
-        <i class="bi bi-person-circle me-1 fs-5"></i>
-        <span class="fw-bold">Login</span>
-    </a>
+  
 <?php endif; ?>
 
         
@@ -192,6 +189,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                     
 
                     <a href="ticket.php" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
+
+                      <a href="login.php" class="ms-auto d-flex align-items-center text-white text-decoration-none">
+        <i class="bi bi-person-circle me-1 fs-5"></i>
+        <span class="fw-bold">Login</span>
+    </a>
                     
 
                 </div>
