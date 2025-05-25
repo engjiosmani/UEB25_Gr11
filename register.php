@@ -75,11 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $role = (isset($_POST['is_admin']) && $_POST['is_admin'] == 'on') ? 'admin' : 'user';
 
-        if ($role === 'admin') {
-            $user = new Admin($name, $email, $hashedPassword, $dob);
-        } else {
-            $user = new User($name, $email, $hashedPassword, $dob);
-        }
+       if ($role === 'admin') {
+    $user = new Admin($name, $email, $hashedPassword, $dob, $phone, $role);
+} else {
+    $user = new User($name, $email, $hashedPassword, $dob, $phone, $role);
+}
+
 
         // INSERT me telefon
         $stmt = $conn->prepare("INSERT INTO users (fullname, email, password, dob, phone, role) VALUES (?, ?, ?, ?, ?, ?)");
@@ -89,7 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           setcookie('new_user', '1', time() + (86400 * 1), "/");
 
             ob_start();
-            $user->displayInfo();
             $output = ob_get_clean();
             $messages = "<div class='alert alert-success'>$output</div>";
             echo $messages;
