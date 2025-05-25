@@ -1,18 +1,17 @@
 <?php
+require_once 'db_conn.php';
 require_once 'error_handler.php';
-
 session_start();
 
 $sort_preference = 'default';
 function set_sort_preference() {
-    global $sort_preference; 
+    global $sort_preference;
     if (isset($_GET['sort'])) {
         $sort_preference = $_GET['sort'];
     }
 }
 set_sort_preference();
 
-// 1. Funksioni për të lexuar fjalët e papërshtatshme nga skedari
 function get_bad_words() {
     $bad_words = [];
     if (file_exists('bad_words.txt')) {
@@ -23,32 +22,36 @@ function get_bad_words() {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
-    
+    $name = $_POST["contact-name"];
+    $email = $_POST["contact-email"];
+    $company = $_POST["contact-company"];
     $message = $_POST["contact-message"];
-    
-    $message_cleaned = strip_tags($message); 
-    
+
+    $message_cleaned = strip_tags($message);
     $message_cleaned = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}]/u', '', $message_cleaned);
-    
     $message_cleaned = preg_replace("/[#@]\w+/", "", $message_cleaned);
-    
+
     $bad_words = get_bad_words();
     if (!empty($bad_words)) {
-        $pattern = '/\b(' . implode('|', array_map('preg_quote', $bad_words)) . ')\b/iu';
+        $pattern = '/\\b(' . implode('|', array_map('preg_quote', $bad_words)) . ')\\b/iu';
         $message_cleaned = preg_replace($pattern, "***", $message_cleaned);
     }
-    
-    $message_cleaned = preg_replace(
-        '/(https?:\/\/[^\s]+)/', 
-        '<a href="$1" target="_blank" rel="noopener">$1</a>', 
-        $message_cleaned
-    );
-    
+
+    $message_cleaned = preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" rel="noopener">$1</a>', $message_cleaned);
     $message_cleaned = preg_replace('/\s+/', ' ', trim($message_cleaned));
-    
-    
-    header("Location: " . $_SERVER['PHP_SELF'] . "#section_6");
-    exit;
+
+    $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, company, message) VALUES (?, ?, ?, ?)");
+    if ($stmt) {
+        $stmt->bind_param("ssss", $name, $email, $company, $message_cleaned);
+        if ($stmt->execute()) {
+            $_SESSION['message_sent'] = true;
+            header("Location: index.php#section_6");
+            exit;
+        }
+        $stmt->close();
+    } else {
+        echo "<div class='alert alert-danger text-center' style='margin: 20px auto; width: 60%;'>There was a problem sending your message.</div>";
+    }
 }
 ?>
 
@@ -627,36 +630,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                             </div>
                         </nav>
                         <div class="tab-content shadow-lg mt-5" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="nav-ContactForm" role="tabpanel"
-                                aria-labelledby="nav-ContactForm-tab">
-                                <form class="custom-form contact-form mb-5 mb-lg-0" action="contact.php" method="post"
-                                    role="form">
-                                    <div class="contact-form-body">
-                                        <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-12">
-                                                <input type="text" name="contact-name" id="contact-name"
-                                                    class="form-control" placeholder="Full name" required>
-                                            </div>
+    <div class="tab-pane fade show active" id="nav-ContactForm" role="tabpanel" aria-labelledby="nav-ContactForm-tab">
+        <?php if (isset($_SESSION['message_sent']) && $_SESSION['message_sent']): ?>
+        <div class="alert alert-success text-center" style="margin: 20px auto; width: 60%;">
+            We have received your message. You will be informed via email soon. Thank you!
+        </div>
+        <?php unset($_SESSION['message_sent']); ?>
+    <?php endif; ?>
+        <form class="custom-form contact-form mb-5 mb-lg-0" action="contact.php" method="post" role="form">
+            <div class="contact-form-body">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-12">
+                        <input type="text" name="contact-name" id="contact-name" class="form-control" placeholder="Full name" required>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-12">
+                        <input type="email" name="contact-email" id="contact-email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required>
+                    </div>
+                </div>
+                <input type="text" name="contact-company" id="contact-company" class="form-control" placeholder="Company" required>
+                <textarea name="contact-message" rows="3" class="form-control" id="contact-message" placeholder="Message"></textarea>
+                <div class="col-lg-4 col-md-10 col-8 mx-auto">
+                    <button type="submit" class="form-control">Send message</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-                                            <div class="col-lg-6 col-md-6 col-12">
-                                                <input type="email" name="contact-email" id="contact-email"
-                                                    pattern="[^ @]*@[^ @]*" class="form-control"
-                                                    placeholder="Email address" required>
-                                            </div>
-                                        </div>
-
-                                        <input type="text" name="contact-company" id="contact-company"
-                                            class="form-control" placeholder="Company" required>
-
-                                        <textarea name="contact-message" rows="3" class="form-control"
-                                            id="contact-message" placeholder="Message"></textarea>
-
-                                        <div class="col-lg-4 col-md-10 col-8 mx-auto">
-                                            <button type="submit" class="form-control">Send message</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
 
                             <div class="tab-pane fade" id="nav-ContactMap" role="tabpanel"
                                 aria-labelledby="nav-ContactMap-tab">
@@ -741,7 +741,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                         </li>
 
                         <li class="site-footer-link-item">
-                            <a class="nav-link click-scroll site-footer-link" href="#section_4"">Schedule</a>
+                            <a class="nav-link click-scroll site-footer-link" href="#section_4">Schedule</a>
                         </li>
 
                         <li class="site-footer-link-item">
@@ -769,7 +769,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                         </a>
                     </p>
                 </div>
-
+            
                 <div class="col-lg-3 col-md-6 col-11 mb-4 mb-lg-0 mb-md-0">
                     <h5 class="site-footer-title mb-3">Location</h5>
 
@@ -802,6 +802,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                 </div>
             </div>
         </div>
+        
     </footer>
 
     <!-- JAVASCRIPT FILES -->
