@@ -6,14 +6,15 @@ class User {
     protected string $email;
     private string $password;
     public string $phone;
-
+    public $role; 
     public string $dob;
 
-    public function __construct($fullname, $email, $password, $dob, $phone) {
+    public function __construct($fullname, $email, $password, $dob, $phone,$role) {
     $this->fullname = $fullname;
     $this->email = $email;
     $this->password = $password;
     $this->dob = $dob;
+    $this->role=$role;
     $this->phone = $phone;
 }
 

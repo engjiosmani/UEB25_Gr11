@@ -14,7 +14,7 @@ $_SESSION['last_admin_action'] = [
 
 $successMessage = '';
 if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
-    $successMessage = "<div class='alert alert-success'>User deleted successfully.</div>";
+    $successMessage = "<div class='alert alert-success'>Ticket deleted successfully.</div>";
 }
 ?>
 <!DOCTYPE html>
@@ -113,14 +113,14 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       <div class="main-content" id="tickets">
         <h3 class="text-warning mb-4"><i class="bi bi-ticket-perforated-fill"></i> Purchased Tickets</h3>
         <?php
-        $ticketQuery = "SELECT u.fullname AS user_name, u.phone, t.ticket_type, t.num_tickets, t.total_price
+        $ticketQuery = "SELECT t.id, u.fullname AS user_name, u.phone, t.ticket_type, t.num_tickets, t.total_price
                         FROM tickets t
                         JOIN users u ON t.user_id = u.id
                         ORDER BY t.id DESC";
         $ticketResult = $conn->query($ticketQuery);
         if ($ticketResult && $ticketResult->num_rows > 0) {
           echo "<table class='table table-striped'>";
-          echo "<thead class='table-dark'><tr><th>User</th><th>Type</th><th>Tickets</th><th>Phone</th><th>Total</th></tr></thead><tbody>";
+          echo "<thead class='table-dark'><tr><th>User</th><th>Type</th><th>Tickets</th><th>Phone</th><th>Total</th><th>Action</th></tr></thead><tbody>";
           while ($row = $ticketResult->fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . htmlspecialchars($row['user_name']) . "</td>";
@@ -128,6 +128,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
             echo "<td>" . htmlspecialchars($row['num_tickets']) . "</td>";
             echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
             echo "<td>$" . number_format($row['total_price'], 2) . "</td>";
+            echo "<td><a href='delete_ticket.php?id=" . $row['id'] . "' onclick=\"return confirm('A jeni i sigurt që dëshironi ta fshini këtë biletë?')\" class='btn btn-danger btn-sm'>Fshij</a></td>";
             echo "</tr>";
           }
           echo "</tbody></table>";

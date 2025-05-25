@@ -124,6 +124,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 </head>
 
 <body>
+    <script>
+$(".update-form").submit(function (e) {
+    e.preventDefault();
+    $.post("update_ticket.php", $(this).serialize(), function (response) {
+        if (response.trim() === "success") {
+            alert("Bileta u përditësua me sukses.");
+            location.reload();
+        } else {
+            alert("Gabim: " + response);
+        }
+    });
+});
+
+$(".delete-btn").click(function () {
+    if (confirm("A jeni i sigurt që dëshironi ta anuloni këtë biletë?")) {
+        const ticketId = $(this).data("id");
+        $.post("delete_ticket.php", { id: ticketId }, function (response) {
+            if (response.trim() === "success") {
+                alert("Bileta u anulua.");
+                location.reload();
+            } else {
+                alert("Gabim: " + response);
+            }
+        });
+    }
+});
+</script>
+
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -210,6 +238,9 @@ if (isset($_SESSION['ticket_error'])) {
 
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_6">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                             <a class="nav-link click-scroll" href="#section_7">My Tickets</a>
                         </li>
 
                     </ul>
@@ -764,6 +795,74 @@ if (isset($_SESSION['ticket_error'])) {
         </div>
     </div>
 </section>
+<?php
+$tickets = [];
+if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+    $stmt = $conn->prepare("SELECT * FROM tickets WHERE user_id = ?");
+    $stmt->bind_param("i", $user->id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $tickets[] = $row;
+    }
+}
+?>
+
+<section class="section-padding section-bg" id="section_7">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h2>Biletat e Mia</h2>
+            </div>
+
+            <?php if (!isset($_SESSION['user'])): ?>
+                <div class="alert alert-warning text-center">Duhet të jeni të kyçur për të parë biletat.</div>
+            <?php elseif (empty($tickets)): ?>
+                <div class="alert alert-info text-center">Nuk ke blerë ende bileta.</div>
+            <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-bordered bg-white">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Lloji</th>
+                                <th>Sasia</th>
+                                <th>Totali</th>
+                                <th>Veprime</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($tickets as $ticket): ?>
+                                <tr>
+                                    <form class="update-form" method="post">
+                                        <td><?= $ticket['id'] ?></td>
+                                        <td>
+                                            <select name="ticket_type" class="form-select form-select-sm">
+                                                <option value="Early Bird" <?= $ticket['ticket_type'] === 'Early Bird' ? 'selected' : '' ?>>Early Bird</option>
+                                                <option value="Standard" <?= $ticket['ticket_type'] === 'Standard' ? 'selected' : '' ?>>Standard</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="num_tickets" value="<?= $ticket['num_tickets'] ?>" min="1" max="10" class="form-control form-control-sm">
+                                        </td>
+                                        <td>$<?= number_format($ticket['total_price'], 2) ?></td>
+                                        <td>
+                                            <input type="hidden" name="ticket_id" value="<?= $ticket['id'] ?>">
+                                            <button type="submit" class="btn btn-primary btn-sm">Përditëso</button>
+                                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="<?= $ticket['id'] ?>">Anulo</button>
+                                        </td>
+                                    </form>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
 
 
     </main>
