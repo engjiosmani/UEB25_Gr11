@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
                     <div class="col-lg-12 col-12 d-flex align-items-center">
                     
                         <p class="d-flex mb-0 align-items-center">
-                            <strong class="text-dark">Welcome to Music Festival 2023</strong>
+                            <strong class="text-dark">Welcome to Music Festival 2025</strong>
                         </p>
         <form method="post" class="ms-auto me-3">
     <button type="submit" name="theme_toggle" class="btn btn-sm btn-outline-secondary">
