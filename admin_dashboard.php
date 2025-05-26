@@ -48,6 +48,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       <a href="#messages" class="active"><i class="bi bi-envelope"></i> Messages</a>
       <a href="#users"><i class="bi bi-people"></i> Users</a>
       <a href="#tickets"><i class="bi bi-ticket"></i> Tickets</a>
+      <a href="admin_logs.php"><i class="bi bi-file-earmark-text"></i> Shfaq Log Mesazhet</a>
       <a href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
 
@@ -137,19 +138,6 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         }
         ?>
       </div>
-<?php
-// SHFAQJA E LOG-UT nga fajlli contact_log.txt, vetëm për adminin
-if ($_SESSION['role'] === 'admin' && file_exists('logs/contact_log.txt')) {
-    echo "<div class='main-content mt-4'>";
-    echo "<h3 class='text-warning mb-4'><i class='bi bi-file-earmark-text'></i> Log nga contact_log.txt</h3>";
-    $lines = file('logs/contact_log.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    echo "<div class='bg-dark text-light p-3 rounded' style='max-height:300px; overflow-y:auto; font-family:monospace; font-size:13px;'>";
-    foreach ($lines as $line) {
-        echo htmlspecialchars($line) . "<br>";
-    }
-    echo "</div></div>";
-}
-?>
 
     </div>
   </div>
