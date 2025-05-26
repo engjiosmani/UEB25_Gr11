@@ -220,7 +220,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="row">
             <div class="col-lg-12 col-12 d-flex align-items-center">
                 <p class="d-flex mb-0 align-items-center">
-                    <strong class="text-dark">Welcome to Music Festival 2023</strong>
+                    <strong class="text-dark">Welcome to Music Festival 2025</strong>
                 </p>
                 <?php if (isset($_SESSION['fullname'])): ?>
                     <div class="ms-auto d-flex align-items-center">

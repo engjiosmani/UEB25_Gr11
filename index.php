@@ -213,71 +213,39 @@ if (isset($_SESSION['ticket_error'])) {
         
 
 
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="index.php">
-                    Festava Live
+       <nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="index.php" >Festava Live</a>
+        <a href="ticket.php" class="btn custom-btn d-lg-none ms-auto me-4">Buy Ticket</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
+                <li class="nav-item"><a class="nav-link" href="index.php#section_1">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php#section_2">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php#section_3">Artists</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php#section_4">Schedule</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php#section_5">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php#section_6">Contact</a></li>
+            </ul>
+            <a href="ticket.php" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
+            <?php if (!isset($_SESSION['fullname'])): ?>
+                <a href="login.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
+                    <i class="bi bi-person-circle me-1 fs-5"></i>
+                    <span class="fw-bold">Login</span>
                 </a>
-
-                <a href="ticket.php" class="btn custom-btn d-lg-none ms-auto me-4">Buy Ticket</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_1">Home</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">About</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Artists</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">Schedule</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_5">Pricing</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_6">Contact</a>
-                        </li>
-                        <li class="nav-item">
-                             <a class="nav-link click-scroll" href="#section_7">Tickets</a>
-                        </li>
-
-                    </ul>
-                    
-
-                    <a href="ticket.php" class="btn custom-btn d-lg-block d-none">Buy Ticket</a>
-
-                     <?php if (!isset($_SESSION['user'])): ?>
-    <a href="login.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
-        <i class="bi bi-person-circle me-1 fs-5"></i>
-        <span class="fw-bold">Login</span>
-    </a>
-<?php else: ?>
-   <a href="logout.php" class="ms-3 d-flex align-items-center text-white text-decoration-none">
-    <i class="bi bi-box-arrow-right me-1 fs-5"></i>
-    <span class="fw-bold">Logout</span>
-</a>
-
-<?php endif; ?>
-
-    </a>
-                    
-
-                </div>
-            </div>
-        </nav>
+            <?php else: ?>
+                <a href="logout.php" class="ms-3 d-flex align-items-center text-danger text-decoration-none fw-bold">
+                    <i class="bi bi-box-arrow-right me-1 fs-5"></i>
+                    <span class="fw-bold">Logout</span>
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+</nav>
 
 
         <section class="hero-section" id="section_1">
