@@ -548,10 +548,10 @@ if (isset($_SESSION['ticket_error'])) {
 
                 <div class="mb-3 text-end">
                   <select id="filter-day" class="form-select" style="width:auto; display:inline-block;">
-                    <option value="">Të gjitha ditët</option>
-                    <option value="Day 1">Dita 1</option>
-                    <option value="Day 2">Dita 2</option>
-                    <option value="Day 3">Dita 3</option>
+                    <option value="">All days</option>
+                    <option value="Day 1">Day 1</option>
+                    <option value="Day 2">Day 2</option>
+                    <option value="Day 3">Day 3</option>
                   </select>
                 </div>
 
@@ -559,11 +559,11 @@ if (isset($_SESSION['ticket_error'])) {
                   <table id="schedule-table" class="schedule-table table table-dark">
                     <thead>
                       <tr>
-                        <th>Dita</th>
-                        <th>Eventi</th>
-                        <th>Ora</th>
-                        <th>Artisti</th>
-                        <th>Detaje</th>
+                        <th>Day</th>
+                        <th>Event</th>
+                        <th>Time</th>
+                        <th>Artist</th>
+                        <th>Details</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -830,11 +830,11 @@ if (isset($_SESSION['user'])) {
 <br>
 <section class="section-padding section-bg" id="section_8">
     <div class="container">
-        <h2 class="mb-4">Sugjero artistin për vitin 2026</h2>
+        <h2 class="mb-4">Suggest an Artist for 2026</h2>
         <form id="suggestionForm">
-            <input type="text" name="artist_name" placeholder="Shkruaj emrin e artistit..." required>
+            <input type="text" name="artist_name" placeholder="Enter artist's name..." required>
             <br><br>
-            <button type="submit">Dërgo Sugjerimin</button>
+            <button type="submit">Send Suggestion</button>
         </form>
         <div id="suggestionMessage"></div>
     </div>
@@ -975,7 +975,7 @@ if (isset($_SESSION['user'])) {
             
         </div>
          <div class="text-center small text-muted">
-    Kjo faqe është vizituar <?= $_SESSION['visit_count'] ?> herë
+    This page has been visited <?= $_SESSION['visit_count'] ?> herë
 </div>
     </footer>
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventTitle" aria-hidden="true">
@@ -1147,7 +1147,7 @@ function loadSchedule(day = "") {
     .then(data => {
       let html = '';
       if(data.length === 0){
-        html = `<tr><td colspan="5" class="text-center">Nuk ka evente për këtë ditë.</td></tr>`;
+        html = `<tr><td colspan="5" class="text-center">No events on this day.</td></tr>`;
       }
       data.forEach(event => {
         html += `
