@@ -1217,3 +1217,8 @@ body.dark-mode .nav-tabs .nav-link {
     color: #fff; /* bardh */
 }
 
+body label.label-black {
+    color: #000 !important;
+}
+
+
