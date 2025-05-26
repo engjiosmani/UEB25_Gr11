@@ -22,13 +22,14 @@ function get_bad_words() {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     $user_id = $_SESSION['user']->id;
-    $company = $_POST["contact-company"];
-    $message = $_POST["contact-message"];
+    $company = htmlspecialchars(trim($_POST["contact-company"]));
+    $message = htmlspecialchars(trim($_POST["contact-message"]));
 
     // Pastrim i mesazhit
     $message_cleaned = strip_tags($message);
     $message_cleaned = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}]/u', '', $message_cleaned);
     $message_cleaned = preg_replace("/[#@]\w+/", "", $message_cleaned);
+    
     $bad_words = get_bad_words();
     if (!empty($bad_words)) {
         $pattern = '/\\b(' . implode('|', array_map('preg_quote', $bad_words)) . ')\\b/iu';
@@ -61,6 +62,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         $logEntry = "[$timestamp] Perd: $user_id | Kompania: $company | Mesazh: $message_cleaned\n";
         fwrite($contactLog, $logEntry);
         fclose($contactLog);
+
+        // DËRGO EMAIL nëse kërkohet
+        if (isset($_POST['also_send_email'])) {
+            $to = "engji.osmani@student.uni-pr.edu.com";
+            $subject = "Mesazh i ri nga kompania: $company";
+            $emailMessage = "Nga përdoruesi ID: $user_id\nKompania: $company\nMesazhi: $message_cleaned";
+            $headers = "From: Festava Live <yourgmail@gmail.com>\r\n";
+            $headers .= "Reply-To: yourgmail@gmail.com\r\n";
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+            if (!mail($to, $subject, $emailMessage, $headers)) {
+                throw new Exception("Mesazhi u ruajt por dërgimi i emailit dështoi.");
+            }
+        }
 
         $_SESSION['message_sent'] = true;
         header("Location: index.php#section_6");

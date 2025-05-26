@@ -773,6 +773,13 @@ if (isset($_SESSION['ticket_error'])) {
                                     <button type="submit" class="form-control">Send message</button>
                                 </div>
                             </div>
+                            <div class="form-check mt-3">
+    <input class="form-check-input" type="checkbox" name="also_send_email" id="also_send_email">
+    <label class="form-check-label" for="also_send_email">
+        Dërgo edhe përmes email
+    </label>
+</div>
+
                         </form>
                         <?php else: ?>
                             <!-- NUK LEJOHET PA LOGIN -->
