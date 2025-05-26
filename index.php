@@ -127,20 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
   #section_8 h2, #section_8 p, #section_8 label {
     color: #fff;
   }
-  .btn-festava {
-    background-color: #ff6126;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-}
-
-.btn-festava:hover {
-    background-color: #e0521f;
-}
-
-
 
 </style>
 <?php endif; ?>
@@ -296,8 +282,6 @@ if (isset($_SESSION['ticket_error'])) {
         </div>
     </div>
 </div>
-
-
 
                     <div class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center">
                         <div class="date-wrap">
