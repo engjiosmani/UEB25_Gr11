@@ -6,3 +6,4 @@
 [2025-05-26 19:00:01] Perd: 10 | Kompania: test | Mesazh: 123
 [2025-05-26 20:41:25] Perd: 1 | Kompania: testim | Mesazh: mesazhi per test email
 [2025-05-26 20:59:33] ID: 1 | Kompania: testim | Mesazh: mesazhi per test email
+[2025-05-26 22:43:34] Perd: 1 | Kompania: testimm2 | Mesazh: testttttt2

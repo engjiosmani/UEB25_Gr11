@@ -360,9 +360,9 @@ if (isset($_SESSION['ticket_error'])) {
         </div>
 
         <div id="weather-info">
-            <h5>Moti në vendin e festivalit:</h5>
-            <p id="weather">Duke u ngarkuar...</p>
-        </div>
+    <h5>Weather at the festival location:</h5>
+    <p id="weather">Loading...</p>
+</div>
     </div>
 </div>
 
@@ -599,108 +599,36 @@ if (isset($_SESSION['ticket_error'])) {
 
 </section>
 
-        <section class="schedule-section section-padding" id="section_4">
+     <section class="schedule-section section-padding" id="section_4">
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
                 <h2 class="text-white mb-4">Event Schedule</h2>
 
-                <?php
-                // 1. Definimi i të dhënave të orarit si multidimensional array
-                $schedule = [
-                    'Day 1' => [
-                        'Wednesday' => [
-                            'title' => 'Pop Night',
-                            'time' => '5:00 - 7:00 PM',
-                            'artist' => 'Adele',
-                            'background' => 'pop-background-image'
-                        ],
-                        'Thursday' => [
-                            'background' => '#F3DCD4'
-                        ],
-                        'Friday' => [
-                            'title' => 'Rock & Roll',
-                            'time' => '7:00 - 11:00 PM',
-                            'artist' => 'Rihana',
-                            'background' => 'rock-background-image'
-                        ]
-                    ],
-                    'Day 2' => [
-                        'Wednesday' => [
-                            'background' => '#ECC9C7'
-                        ],
-                        'Thursday' => [
-                            'title' => 'DJ Night',
-                            'time' => '6:30 - 9:30 PM',
-                            'artist' => 'Rihana'
-                        ],
-                        'Friday' => [
-                            'background' => '#D9E3DA'
-                        ]
-                    ],
-                    'Day 3' => [
-                        'Wednesday' => [
-                            'title' => 'Country Music',
-                            'time' => '4:30 - 7:30 PM',
-                            'artist' => 'Rihana',
-                            'background' => 'country-background-image'
-                        ],
-                        'Thursday' => [
-                            'background' => '#D1CFC0'
-                        ],
-                        'Friday' => [
-                            'title' => 'Free Styles',
-                            'time' => '6:00 - 10:00 PM',
-                            'artist' => 'By Members'
-                        ]
-                    ]
-                ];
-                ?>
+                <div class="mb-3 text-end">
+                  <select id="filter-day" class="form-select" style="width:auto; display:inline-block;">
+                    <option value="">All days</option>
+                    <option value="Day 1">Day 1</option>
+                    <option value="Day 2">Day 2</option>
+                    <option value="Day 3">Day 3</option>
+                  </select>
+                </div>
 
-                <!-- 2. Tabela dinamike -->
-                <div class="table-responsive">
-                    <table class="schedule-table table table-dark">
-                        <thead>
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Wednesday</th>
-                                <th scope="col">Thursday</th>
-                                <th scope="col">Friday</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($schedule as $day => $events): ?>
-                                <tr>
-                                    <th scope="row"><?= $day ?></th>
-                                    <?php 
-                                    // Renditja e ditëve sipas renditjes së dëshiruar
-                                    $daysOrder = ['Wednesday', 'Thursday', 'Friday'];
-                                    foreach ($daysOrder as $dayName): 
-                                        $event = $events[$dayName] ?? [];
-                                    ?>
-                                        <td
-                                      <?php if (isset($event['background'])): ?>
-                                      <?php if (strpos($event['background'], '-background-image') !== false): ?>
-                                     class="table-background-image-wrap <?= $event['background'] ?>"
-                                     <?php else: ?>
-                                     style="background-color: <?= $event['background'] ?>"
-                                      <?php endif; ?>
-                                       <?php endif; ?>
-                                     >
-                                      <?php if (!empty($event['title'])): ?>
-                                      <h3><?= $event['title'] ?></h3>
-                                       <p class="mb-2"><?= $event['time'] ?></p>
-                                       <p>By <?= $event['artist'] ?></p>
-                                        <?php if (strpos($event['background'] ?? '', '-background-image') !== false): ?>
-                                        <div class="section-overlay"></div> 
-                                        <?php endif; ?>
-                                        <?php endif; ?>
-                                     </td>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                 <div class="table-responsive">
+                  <table id="schedule-table" class="schedule-table table table-dark">
+                    <thead>
+                      <tr>
+                        <th>Day</th>
+                        <th>Event</th>
+                        <th>Time</th>
+                        <th>Artist</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Mbushen me JS -->
+                    </tbody>
+                  </table>
                 </div>
             </div>
         </div>
@@ -961,11 +889,11 @@ if (isset($_SESSION['user'])) {
 <br>
 <section class="section-padding section-bg" id="section_8">
     <div class="container">
-        <h2 class="mb-4">Sugjero artistin për vitin 2026</h2>
+        <h2 class="mb-4">Suggest an Artist for 2026</h2>
         <form id="suggestionForm">
-            <input type="text" name="artist_name" placeholder="Shkruaj emrin e artistit..." required>
+            <input type="text" name="artist_name" placeholder="Enter artist's name..." required>
             <br><br>
-            <button type="submit">Dërgo Sugjerimin</button>
+            <button type="submit">Send Suggestion</button>
         </form>
         <div id="suggestionMessage"></div>
     </div>
@@ -1106,9 +1034,20 @@ if (isset($_SESSION['user'])) {
             
         </div>
          <div class="text-center small text-muted">
-    Kjo faqe është vizituar <?= $_SESSION['visit_count'] ?> herë
+    This page has been visited <?= $_SESSION['visit_count'] ?> herë
 </div>
     </footer>
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="eventDetails"></div>
+    </div>
+  </div>
+</div>
 
     <!-- JAVASCRIPT FILES -->
     <script src="js/jquery.min.js"></script>
@@ -1117,6 +1056,7 @@ if (isset($_SESSION['user'])) {
     <script src="js/click-scroll.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/vote.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
     <script>
@@ -1256,6 +1196,58 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+<script>
+function loadSchedule(day = "") {
+  let url = "get_schedule.php";
+  if(day) url += "?day=" + encodeURIComponent(day);
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      let html = '';
+      if(data.length === 0){
+        html = `<tr><td colspan="5" class="text-center">No events on this day.</td></tr>`;
+      }
+      data.forEach(event => {
+        html += `
+          <tr>
+            <td>${event.event_day}</td>
+            <td>${event.event_title}</td>
+            <td>${event.event_time}</td>
+            <td>${event.event_artist}</td>
+            <td>
+              <button class="btn btn-info btn-sm" 
+                onclick="showEventModal('${event.event_title}', '${event.event_artist}', '${event.event_time}', '${event.event_bio}', '${event.event_image}')">
+                Shiko
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      document.querySelector("#schedule-table tbody").innerHTML = html;
+    });
+}
+
+function showEventModal(title, artist, time, bio, image) {
+  document.getElementById('eventTitle').textContent = title;
+  document.getElementById('eventDetails').innerHTML =
+    `<b>Artist:</b> ${artist}<br>
+     <b>Ora:</b> ${time}<br>
+     <b>Bio:</b> ${bio}<br>
+     <img src="images/artists/${image}" style="max-width:100%; margin-top:10px;">`;
+  var myModal = new bootstrap.Modal(document.getElementById('eventModal'));
+  myModal.show();
+}
+
+// Ngarko orarin kur faqja hapet
+loadSchedule();
+
+// Ndrysho filtrin e ditës
+document.getElementById('filter-day').addEventListener('change', function(){
+  loadSchedule(this.value);
+});
+</script>
+
 
 </body>
 
