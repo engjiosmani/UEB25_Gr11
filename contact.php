@@ -1,4 +1,11 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'phpmailer/PHPMailer.php';
+require 'phpmailer/SMTP.php';
+require 'phpmailer/Exception.php';
+
 require_once 'db_conn.php';
 require_once 'error_handler.php';
 require_once 'klasat/User.php';
@@ -25,11 +32,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     $company = htmlspecialchars(trim($_POST["contact-company"]));
     $message = htmlspecialchars(trim($_POST["contact-message"]));
 
-    // Pastrim i mesazhit
     $message_cleaned = strip_tags($message);
     $message_cleaned = preg_replace('/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}]/u', '', $message_cleaned);
     $message_cleaned = preg_replace("/[#@]\w+/", "", $message_cleaned);
-    
+
     $bad_words = get_bad_words();
     if (!empty($bad_words)) {
         $pattern = '/\\b(' . implode('|', array_map('preg_quote', $bad_words)) . ')\\b/iu';
@@ -37,43 +43,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     }
 
     try {
-        // Validim bazë
         if (empty($company) || empty($message_cleaned)) {
             throw new Exception("Ju lutem plotësoni të gjitha fushat.");
         }
 
         $stmt = $conn->prepare("INSERT INTO contact_messages (user_id, company, message) VALUES (?, ?, ?)");
-        if (!$stmt) {
-            throw new Exception("Gabim gjatë përgatitjes së deklaratës për ruajtjen e mesazhit.");
-        }
-
+        if (!$stmt) throw new Exception("Gabim gjatë përgatitjes së deklaratës.");
         $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
-        if (!$stmt->execute()) {
-            throw new Exception("Gabim gjatë ekzekutimit të ruajtjes së mesazhit.");
-        }
+        if (!$stmt->execute()) throw new Exception("Gabim gjatë ruajtjes së mesazhit.");
 
-        // LOGIM NE FAJLL
-        if (!file_exists('logs')) {
-            mkdir('logs', 0777, true);
-        }
+        // LOG
+        if (!file_exists('logs')) mkdir('logs', 0777, true);
+        file_put_contents("logs/contact_log.txt", "[" . date("Y-m-d H:i:s") . "] ID: $user_id | Kompania: $company | Mesazh: $message_cleaned\n", FILE_APPEND);
 
-        $contactLog = fopen("logs/contact_log.txt", "a");
-        $timestamp = date("Y-m-d H:i:s");
-        $logEntry = "[$timestamp] Perd: $user_id | Kompania: $company | Mesazh: $message_cleaned\n";
-        fwrite($contactLog, $logEntry);
-        fclose($contactLog);
-
-        // DËRGO EMAIL nëse kërkohet
+        // EMAIL
         if (isset($_POST['also_send_email'])) {
-            $to = "engji.osmani@student.uni-pr.edu.com";
+            $to = "engji.osmani@student.uni-pr.edu";
             $subject = "Mesazh i ri nga kompania: $company";
             $emailMessage = "Nga përdoruesi ID: $user_id\nKompania: $company\nMesazhi: $message_cleaned";
-            $headers = "From: Festava Live <yourgmail@gmail.com>\r\n";
-            $headers .= "Reply-To: yourgmail@gmail.com\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-            if (!mail($to, $subject, $emailMessage, $headers)) {
-                throw new Exception("Mesazhi u ruajt por dërgimi i emailit dështoi.");
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'engjiosmani5@gmail.com';
+                $mail->Password = 'zllo nfkv njdn ijyd'; // App password!
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
+
+                $mail->setFrom('engjiosmani5@gmail.com', 'Festava Live');
+                $mail->addAddress($to);
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body = nl2br($emailMessage);
+                $mail->send();
+            } catch (Exception $e) {
+                error_log("Emaili nuk u dërgua: " . $mail->ErrorInfo);
             }
         }
 
@@ -82,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         exit;
 
     } catch (Exception $e) {
-        echo "<div class='alert alert-danger text-center'> Gabim: " . htmlspecialchars($e->getMessage()) . "</div>";
+        echo "<div class='alert alert-danger text-center'>Gabim: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
 ?>

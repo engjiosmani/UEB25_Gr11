@@ -1,10 +1,7 @@
 <?php
-$apiKey = "804904a1c3c6554a833f2c1e64deefc1";
-$city = "New York";
-
-$cityEncoded = urlencode($city);
-
-$url = "https://api.openweathermap.org/data/2.5/weather?q=$cityEncoded&appid=$apiKey&units=metric";
+$apiKey = "804904a1c3c6554a833f2c1e64deefc1"; 
+$city = urlencode("New York");
+$url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric";
 
 $response = file_get_contents($url);
 
@@ -14,4 +11,3 @@ if ($response !== false) {
 } else {
     echo json_encode(["error" => "Gabim gjatë kërkesës."]);
 }
-?>

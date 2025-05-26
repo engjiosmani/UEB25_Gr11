@@ -6,33 +6,36 @@ require 'phpmailer/PHPMailer.php';
 require 'phpmailer/SMTP.php';
 require 'phpmailer/Exception.php';
 
+
+$emri = "Testuesi";
+$mesazhi = "Ky është një mesazh testues nga projekti!";
+$email_marrës = "engjiosmani5@gmail.com"; 
+
+
 $mail = new PHPMailer(true);
 
 try {
-    // Konfigurimi i SMTP me Gmail
+    // Konfigurimi për Gmail
     $mail->isSMTP();
-    $mail->Host       = 'smtp.gmail.com';
-    $mail->SMTPAuth   = true;
+    $mail->Host = 'smtp.gmail.com'; 
+    $mail->SMTPAuth = true;
+    $mail->Username = 'engjiosmani5@gmail.com'; // 
+    $mail->Password = 'zllo nfkv njdn ijyd'; // 
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
 
-    // Vendos emailin dhe fjalëkalimin (ose App Password)
-    $mail->Username   = 'emriyt@gmail.com'; 
-    $mail->Password   = 'fjalekalimi_ose_app_password'; 
+    // Dërguesi dhe Marrësi
+    $mail->setFrom('emailiyt@gmail.com', 'Festava Live');
+    $mail->addAddress($email_marrës, 'Përdorues');
 
-    $mail->SMTPSecure = 'tls';
-    $mail->Port       = 587;
-
-    // Dërguesi dhe marrësi
-    $mail->setFrom('emriyt@gmail.com', 'Festava Live');
-    $mail->addAddress('admin@festava.com'); // ku shkon emaili
-
-    // Përmbajtja e emailit
+    // Përmbajtja
     $mail->isHTML(true);
-    $mail->Subject = 'Mesazh nga përdoruesi';
-    $mail->Body    = "Kompania: {$_POST['contact-company']}<br>Mesazhi: {$_POST['contact-message']}";
+    $mail->Subject = 'Mesazh nga Festava';
+    $mail->Body    = "<strong>Emri:</strong> $emri<br><strong>Mesazhi:</strong><br>$mesazhi";
 
     $mail->send();
     echo 'Emaili u dërgua me sukses!';
 } catch (Exception $e) {
-    echo "Dërgimi dështoi. Gabimi: {$mail->ErrorInfo}";
+    echo "Gabim gjatë dërgimit të emailit. Mesazhi: {$mail->ErrorInfo}";
 }
 ?>
