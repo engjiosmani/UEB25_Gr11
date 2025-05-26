@@ -515,6 +515,18 @@ if (isset($_SESSION['ticket_error'])) {
             </div>
         </div>
     </div>
+    <div class="text-center my-4">
+    <h4>Vote for Your Favorite Artist</h4>
+    <button class="btn btn-outline-primary vote-btn" data-artist="Madona">Madona</button>
+    <button class="btn btn-outline-primary vote-btn" data-artist="Rihana">Rihana</button>
+    <button class="btn btn-outline-primary vote-btn" data-artist="Bruno Mars">Bruno Mars</button>
+</div>
+
+<div class="mt-4" id="voteResults">
+    <h5 class="text-center">Live Voting Results:</h5>
+    <ul class="list-group w-50 mx-auto" id="voteList"></ul>
+</div>
+
 </section>
 
         <section class="schedule-section section-padding" id="section_4">
@@ -1013,6 +1025,8 @@ if (isset($_SESSION['user'])) {
     <script src="js/jquery.sticky.js"></script>
     <script src="js/click-scroll.js"></script>
     <script src="js/custom.js"></script>
+    <script src="js/vote.js"></script>
+
 
     <script>
         function showMapTab() {
