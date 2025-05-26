@@ -425,6 +425,8 @@ if (isset($_SESSION['ticket_error'])) {
             $firstArtist = &$artists['Madona'];
             $firstArtist['age'] = 70;
 
+            unset($firstArtist);
+
             $sort_type = $_GET['sort'] ?? 'name_asc';
 
             switch ($sort_type) {
