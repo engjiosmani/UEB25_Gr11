@@ -7,24 +7,15 @@ require_once 'klasat/Admin.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// Fillojmë sesionin nëse nuk është aktiv
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+setcookie('cookie_consent', '', time() - 3600, '/'); // Fshi cookie për test
 
-// Kontrollo nëse përdoruesi ka zgjedhur ndonjë opsion për cookie
-if (isset($_POST['cookie_action'])) {
-    $action = $_POST['cookie_action'];
-
-    if ($action === 'accept') {
-        // Ruaj preferencën si cookie për 30 ditë
-        setcookie("cookie_consent", "accepted", time() + (86400 * 30), "/");
-    } elseif ($action === 'decline') {
-        // Fshi cookie duke e vendosur në të kaluarën
-        setcookie("cookie_consent", "", time() - 3600, "/");
+// Cookies për lejen e përdorimit
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cookie_action'])) {
+    if ($_POST['cookie_action'] === 'accept') {
+        setcookie('cookie_consent', 'accepted', time() + (86400 * 30), "/");
+    } elseif ($_POST['cookie_action'] === 'decline') {
+        setcookie('cookie_consent', 'declined', time() + (86400 * 30), "/");
     }
-
-    // Rifresko faqen për të reflektuar ndryshimin
     header("Location: index.php");
     exit();
 }
@@ -175,32 +166,11 @@ body {
     background-color: <?php echo isset($_COOKIE['cookie_consent']) && $_COOKIE['cookie_consent'] === 'accepted' ? '#fbeee6' : '#ffffff'; ?>;
     transition: background-color 0.5s ease;
 }
-.cookie-banner {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #fff;
-    padding: 20px 30px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-    z-index: 9999;
-    text-align: center;
-    border-radius: 8px;
-}
-.cookie-banner button {
-    margin: 10px;
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
-}
-.cookie-banner .accept {
-    background-color: #623c3c;
-    color: white;
-}
-.cookie-banner .decline {
-    background-color: #9c4949;
-    color: white;
-}
+<?php if (isset($_COOKIE['cookie_consent']) && $_COOKIE['cookie_consent'] === 'accepted'): ?>
+    body {
+        background-color: #fbeee6 !important;
+    }
+<?php endif; ?>
 
 </style>
 <?php endif; ?>
@@ -210,15 +180,7 @@ body {
 </head>
 
 <body class="<?= ($theme === 'dark') ? 'dark-mode' : '' ?>">
-<?php if (!isset($_COOKIE['cookie_consent'])): ?>
-<div class="cookie-banner">
-    <p>Ne përdorim cookies për të përmirësuar përvojën tuaj në faqen tonë. Duke vazhduar, ju pranoni përdorimin e cookies. <a href="#">Mëso më shumë</a></p>
-    <form method="POST">
-        <button type="submit" name="cookie_action" value="accept" class="accept">Prano</button>
-        <button type="submit" name="cookie_action" value="decline" class="decline">Refuzo</button>
-    </form>
-</div>
-<?php endif; ?>
+
     <script>
 $(".update-form").submit(function (e) {
     e.preventDefault();
@@ -587,10 +549,16 @@ if (isset($_SESSION['ticket_error'])) {
     </div>
     <div class="text-center my-4">
     <h4>Vote for Your Favorite Artist</h4>
-    <button class="btn btn-outline-primary vote-btn" data-artist="Madona">Madona</button>
-    <button class="btn btn-outline-primary vote-btn" data-artist="Rihana">Rihana</button>
-    <button class="btn btn-outline-primary vote-btn" data-artist="Bruno Mars">Bruno Mars</button>
+    <?php $can_vote = (!isset($_COOKIE['cookie_consent']) || $_COOKIE['cookie_consent'] !== 'declined'); ?>
+    <button class="btn btn-outline-primary vote-btn" data-artist="Madona" <?= $can_vote ? '' : 'disabled' ?>>Madona</button>
+    <button class="btn btn-outline-primary vote-btn" data-artist="Rihana" <?= $can_vote ? '' : 'disabled' ?>>Rihana</button>
+    <button class="btn btn-outline-primary vote-btn" data-artist="Bruno Mars" <?= $can_vote ? '' : 'disabled' ?>>Bruno Mars</button>
+
+    <?php if (!$can_vote): ?>
+        <p class="text-danger mt-2">Duhet të pranoni cookies për të votuar.</p>
+    <?php endif; ?>
 </div>
+
 
 <div class="mt-4" id="voteResults">
     <h5 class="text-center">Live Voting Results:</h5>
@@ -1246,9 +1214,40 @@ loadSchedule();
 document.getElementById('filter-day').addEventListener('change', function(){
   loadSchedule(this.value);
 });
+
+function showCookieInfo() {
+    document.getElementById('cookie-info-popup').style.display = 'block';
+}
+function hideCookieInfo() {
+    document.getElementById('cookie-info-popup').style.display = 'none';
+}
+
 </script>
 
-
+<?php if (!isset($_COOKIE['cookie_consent'])): ?>
+<div class="cookie-banner" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+background:rgb(173, 134, 86); border: 1px solid #ccc; padding: 20px; z-index: 9999; max-width: 90%; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: center; border-radius: 10px;">
+    <p style="color: #000; margin-bottom: 10px;">Ne përdorim cookies për të përmirësuar përvojën tuaj.  <a href="#" onclick="showCookieInfo()" style="color: #b35400; text-decoration: underline;">Mëso më shumë</a></p>
+    <form method="POST" style="display: flex; gap: 10px; justify-content: center;">
+        <button name="cookie_action" value="accept" class="btn btn-success">Prano</button>
+        <button name="cookie_action" value="decline" class="btn btn-danger">Refuzo</button>
+    </form>
+</div>
+<?php endif; ?>
 </body>
+<div id="cookie-info-popup" style="display: none; position: fixed; top: 50%; left: 50%;
+transform: translate(-50%, -50%); background: #fff4e5; border: 1px solid #ccc;
+padding: 25px; z-index: 10000; width: 90%; max-width: 600px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3);">
+    <button onclick="hideCookieInfo()" style="position: absolute; top: 10px; right: 15px;
+    background: transparent; border: none; font-size: 20px; font-weight: bold;">&times;</button>
+    <h4>Politika e Cookies</h4>
+    <p>Ne përdorim cookies për:</p>
+    <ul>
+        <li><strong>Funksione bazike</strong>: si tema (dark/light) ose ruajtje preferencash</li>
+        <li><strong>Votim dhe sugjerime</strong>: vetëm nëse pranohen cookies</li>
+        <li><strong>Siguri</strong>: për të ruajtur seancën tuaj gjatë lundrimit</li>
+    </ul>
+    <p>Nëse refuzoni cookies, disa funksione si votimi ose sugjerimi i artistëve nuk do të jenë të aktivizuara.</p>
+</div>
 
 </html>
