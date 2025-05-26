@@ -119,6 +119,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
     body { background-color: #222; color: #fff; }
     .section-padding, .hero-section { background-color: #333 !important; }
 <?php endif; ?>
+<?php if ($theme === 'dark'): ?>
+<style>
+  #section_8 {
+    background-color: #1e1e1e;
+  }
+  #section_8 h2, #section_8 p, #section_8 label {
+    color: #fff;
+  }
+</style>
+<?php endif; ?>
+
 </style>
 
 </head>
@@ -881,22 +892,19 @@ if (isset($_SESSION['user'])) {
         </div>
     </div>
 </section>
-<section class="section-padding" id="section_8">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-12 mx-auto text-center">
+<br>
+<section class="section-padding section-bg" id="section_8">
+    <div class="container">
         <h2 class="mb-4">Sugjero artistin për vitin 2026</h2>
         <form id="suggestionForm">
-          <div class="mb-3">
-            <input type="text" class="form-control" name="artist_name" placeholder="Shkruaj emrin e artistit..." required>
-          </div>
-          <button type="submit" class="btn btn-primary">Dërgo Sugjerimin</button>
+            <input type="text" name="suggested_artist" placeholder="Shkruaj emrin e artistit..." required>
+            <br><br>
+            <button type="submit">Dërgo Sugjerimin</button>
         </form>
-        <div id="suggestionMessage" class="mt-3"></div>
-      </div>
+        <div id="suggestionMessage"></div>
     </div>
-  </div>
 </section>
+
 
 
 

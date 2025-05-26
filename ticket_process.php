@@ -1,7 +1,11 @@
+
 <?php
-require_once 'error_handler.php';
-require_once 'klasat/User.php';
 require_once 'db_conn.php';
+require_once 'klasat/User.php';
+require_once 'klasat/Admin.php';
+
+session_start(); // Duhet të jetë këtu
+
 
 define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
