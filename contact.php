@@ -35,28 +35,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         $message_cleaned = preg_replace($pattern, "***", $message_cleaned);
     }
 
-    $stmt = $conn->prepare("INSERT INTO contact_messages (user_id, company, message) VALUES (?, ?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
-        if ($stmt->execute()) {
-            $_SESSION['message_sent'] = true;
-            // === LOGIMI NE FAJLL: contact_log.txt ===
-            if (!file_exists('logs')) {
-                mkdir('logs', 0777, true);
-            }
-
-            $contactLog = fopen("logs/contact_log.txt", "a");
-            $timestamp = date("Y-m-d H:i:s");
-            $logEntry = "[$timestamp] Perd: $user_id | Kompania: $company | Mesazh: $message_cleaned\n";
-            fwrite($contactLog, $logEntry);
-            fclose($contactLog);
-            // =========================================
-
-            header("Location: index.php#section_6");
-            exit;
+    try {
+        // Validim bazë
+        if (empty($company) || empty($message_cleaned)) {
+            throw new Exception("Ju lutem plotësoni të gjitha fushat.");
         }
-        $stmt->close();
-    } else {
-        echo "<div class='alert alert-danger text-center'>Nuk u dërgua mesazhi.</div>";
+
+        $stmt = $conn->prepare("INSERT INTO contact_messages (user_id, company, message) VALUES (?, ?, ?)");
+        if (!$stmt) {
+            throw new Exception("Gabim gjatë përgatitjes së deklaratës për ruajtjen e mesazhit.");
+        }
+
+        $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
+        if (!$stmt->execute()) {
+            throw new Exception("Gabim gjatë ekzekutimit të ruajtjes së mesazhit.");
+        }
+
+        // LOGIM NE FAJLL
+        if (!file_exists('logs')) {
+            mkdir('logs', 0777, true);
+        }
+
+        $contactLog = fopen("logs/contact_log.txt", "a");
+        $timestamp = date("Y-m-d H:i:s");
+        $logEntry = "[$timestamp] Perd: $user_id | Kompania: $company | Mesazh: $message_cleaned\n";
+        fwrite($contactLog, $logEntry);
+        fclose($contactLog);
+
+        $_SESSION['message_sent'] = true;
+        header("Location: index.php#section_6");
+        exit;
+
+    } catch (Exception $e) {
+        echo "<div class='alert alert-danger text-center'> Gabim: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
+?>
