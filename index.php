@@ -798,7 +798,7 @@ if (isset($_SESSION['ticket_error'])) {
                             </div>
                             <div class="form-check mt-3">
     <input class="form-check-input" type="checkbox" name="also_send_email" id="also_send_email">
-    <label class="form-check-label" for="also_send_email">
+    <label class="form-check-label label-black" for="also_send_email" >
         Dërgo edhe përmes email
     </label>
 </div>
