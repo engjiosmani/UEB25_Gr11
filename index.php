@@ -251,7 +251,7 @@ if (isset($_SESSION['ticket_error'])) {
                             <a class="nav-link click-scroll" href="#section_6">Contact</a>
                         </li>
                         <li class="nav-item">
-                             <a class="nav-link click-scroll" href="#section_7">My Tickets</a>
+                             <a class="nav-link click-scroll" href="#section_7">Tickets</a>
                         </li>
 
                     </ul>
