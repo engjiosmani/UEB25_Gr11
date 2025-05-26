@@ -7,6 +7,13 @@ define("EARLY_BIRD_PRICE", 120);
 define("STANDARD_PRICE", 240);
 define("MAX_TICKETS", 10);
 
+function pastroMesazhin(&$mesazhi) {
+    $mesazhi = trim($mesazhi);
+    $mesazhi = strip_tags($mesazhi);
+    $mesazhi = preg_replace('/\s+/', ' ', $mesazhi); 
+}
+
+
 function validateAndFormatPhone($phone) {
     $digitsOnly = preg_replace("/\D+/", "", $phone);
     if (str_starts_with($digitsOnly, "383")) {
@@ -52,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ticket_type = $_POST['ticket_type'] ?? '';
     $num_tickets = $_POST['num_tickets'] ?? '';
     $message = $_POST['message'] ?? '';
+
+     pastroMesazhin($message);
 
     $errors = [];
 
