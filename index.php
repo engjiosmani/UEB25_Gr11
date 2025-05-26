@@ -297,17 +297,24 @@ if (isset($_SESSION['ticket_error'])) {
     $festival_days = ['Friday, August 10', 'Saturday, August 11', 'Sunday, August 12'];
 ?>
 <div class="col-lg-12 col-12 mt-4">
-    <div class="festival-days-box">
-        <h5 class="text-white text-center mb-3">Festival Days</h5>
-        <ul class="festival-days-list">
-            <?php foreach ($festival_days as $index => $day): ?>
-                <li class="text-white">
-                    <?= ($index + 1) ?>. <?= $day ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+    <div class="hero-info-wrapper">
+        <div class="festival-days-box">
+            <h5>Festival Days</h5>
+            <ul>
+                <?php foreach ($festival_days as $index => $day): ?>
+                    <li><?= ($index + 1) ?>. <?= $day ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
+        <div id="weather-info">
+            <h5>Moti në vendin e festivalit:</h5>
+            <p id="weather">Duke u ngarkuar...</p>
+        </div>
     </div>
 </div>
+
+
 
                     <div class="col-lg-12 col-12 mt-auto d-flex flex-column flex-lg-row text-center">
                         <div class="date-wrap">
@@ -1172,6 +1179,25 @@ if (isset($_COOKIE['last_ticket'])) {
     // Ngarko votat sapo të hapet faqja
     loadVotes();
 });
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("weather_api.php")
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.main && data.weather) {
+                const temp = data.main.temp;
+                const desc = data.weather[0].description;
+                document.getElementById("weather").innerText =
+                    `Temperatura: ${temp}°C, ${desc}`;
+            } else {
+                document.getElementById("weather").innerText = "Gabim gjatë kërkesës.";
+            }
+        })
+        .catch(err => {
+            document.getElementById("weather").innerText = "Gabim gjatë ngarkimit të motit.";
+            console.error("Gabim në fetch motin:", err);
+        });
+});
+
 </script>
 
 </body>
