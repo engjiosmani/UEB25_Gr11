@@ -86,12 +86,9 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         ?>
       </div>
 
-<<<<<<< Updated upstream
     <!-- Users Section -->
 
-<div class="main-content" id="users">
-  <h3 class="text-warning mb-4"><i class="bi bi-people-fill"></i> Registered Users</h3>
-=======
+
       <!-- Users Section -->
       <div class="main-content" id="users">
         <h3 class="text-warning mb-4"><i class="bi bi-people-fill"></i> Registered Users</h3>
@@ -153,7 +150,6 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
 <!-- VOTAT PËR ARTISTËT -->
 <div class="main-content" id="votes">
   <h3 class="text-warning mb-4"><i class="bi bi-bar-chart-fill"></i> Artist Votes</h3>
->>>>>>> Stashed changes
   <?php
   $userQuery = "SELECT id, fullname, email, dob, role, phone FROM users ORDER BY id DESC";
   $userResult = $conn->query($userQuery);
