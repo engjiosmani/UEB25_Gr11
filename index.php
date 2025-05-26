@@ -899,7 +899,7 @@ if (isset($_SESSION['user'])) {
     <div class="container">
         <h2 class="mb-4">Sugjero artistin për vitin 2026</h2>
         <form id="suggestionForm">
-            <input type="text" name="suggested_artist" placeholder="Shkruaj emrin e artistit..." required>
+            <input type="text" name="artist_name" placeholder="Shkruaj emrin e artistit..." required>
             <br><br>
             <button type="submit">Dërgo Sugjerimin</button>
         </form>
@@ -1098,6 +1098,58 @@ if (isset($_COOKIE['last_ticket'])) {
         });
     }, 5000);
 </script>
+<script>
+$(document).ready(function () {
+    // Sugjerimi i artistit
+    $("#suggestionForm").submit(function(e) {
+        e.preventDefault();
+        const artist = $("input[name='artist_name']").val().trim();
+
+        if (artist.length < 2) {
+            $("#suggestionMessage").html("<div class='alert alert-danger'>Emri i artistit është shumë i shkurtër.</div>");
+            return;
+        }
+
+        $.post("ajax_handler.php", { artist_name: artist }, function(response) {
+            $("#suggestionMessage").html(response);
+            $("#suggestionForm")[0].reset();
+        });
+    });
+
+    // Votimi për artistin
+    $(".vote-btn").click(function () {
+        const artist = $(this).data("artist");
+
+        $.post("ajax_handler.php", { vote_artist: artist }, function (response) {
+            if (response === "success") {
+                alert("✅ Votimi u ruajt me sukses!");
+                loadVotes();
+            } else if (response === "already_voted") {
+                alert("⚠️ Ju keni votuar tashmë!");
+            } else {
+                alert("❌ Gabim gjatë votimit.");
+            }
+        });
+    });
+
+    // Leximi i votave (me AJAX)
+    function loadVotes() {
+        $.get("ajax_handler.php", { get_votes: true }, function(data) {
+            let html = "";
+            $.each(data, function(artist, count) {
+                html += `<li class='list-group-item d-flex justify-content-between'>
+                            <strong>${artist}</strong> <span>${count} vota</span>
+                         </li>`;
+            });
+            $("#voteList").html(html);
+        });
+    }
+
+    // Ngarko votat sapo të hapet faqja
+    loadVotes();
+});
+</script>
+
 
 </body>
 
