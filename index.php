@@ -832,7 +832,7 @@ if (isset($_SESSION['user'])) {
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-4">
-                <h2 class="text-white">My Tickets</h2>
+                <h2 id="my-tickets-title">My Tickets</h2>
             </div>
 
             <?php if (!isset($_SESSION['user'])): ?>

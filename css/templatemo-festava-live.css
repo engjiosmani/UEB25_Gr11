@@ -1197,3 +1197,23 @@ body {
     color: #000;
 }
 
+body.dark-mode #nav-ContactMap-tab h5 {
+    color: #111 !important; /* tekst i zi për kontrast të qartë në sfond të hapur */
+}
+
+body.dark-mode #nav-ContactForm-tab h5 {
+    color: #fff !important; /* kontakt form mbetet i bardhë */
+}
+body.dark-mode .nav-tabs .nav-link {
+    background-color: #ddd;
+}
+/* Default (light mode) */
+.light-mode #my-tickets-title {
+    color: #000; /* zi */
+}
+
+/* Dark mode */
+.dark-mode #my-tickets-title {
+    color: #fff; /* bardh */
+}
+
