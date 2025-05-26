@@ -127,6 +127,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
   #section_8 h2, #section_8 p, #section_8 label {
     color: #fff;
   }
+  .btn-festava {
+    background-color: #ff6126;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-festava:hover {
+    background-color: #e0521f;
+}
 
 </style>
 <?php endif; ?>
