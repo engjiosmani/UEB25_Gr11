@@ -52,9 +52,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
         if (!$stmt->execute()) throw new Exception("Gabim gjatë ruajtjes së mesazhit.");
 
-        // LOG
+        // === LOGIMI NË FAJLL: contact_log.txt ===
         if (!file_exists('logs')) mkdir('logs', 0777, true);
-        file_put_contents("logs/contact_log.txt", "[" . date("Y-m-d H:i:s") . "] ID: $user_id | Kompania: $company | Mesazh: $message_cleaned\n", FILE_APPEND);
+
+        $contactLog = fopen("logs/contact_log.txt", "a");
+        $timestamp = date("Y-m-d H:i:s");
+        $logEntry = "[$timestamp] Perd: $user_id | Kompania: $company | Mesazh: $message_cleaned\n";
+        fwrite($contactLog, $logEntry);
+        fclose($contactLog);
+        // =========================================
 
         // EMAIL
         if (isset($_POST['also_send_email'])) {
@@ -91,4 +97,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         echo "<div class='alert alert-danger text-center'>Gabim: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
+
 ?>
