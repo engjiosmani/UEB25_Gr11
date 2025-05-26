@@ -1172,4 +1172,28 @@ strong {
     color: #333;
 }
 
+/* Stili për dark mode */
+body.dark-mode {
+    background-color: #222;
+    color: #fff;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode li,
+body.dark-mode label {
+    color: #fff !important;
+}
+
+/* Stili për light mode (default) */
+body {
+    background-color: #fff;
+    color: #000;
+}
 

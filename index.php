@@ -147,7 +147,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 
 </head>
 
-<body>
+<body class="<?= ($theme === 'dark') ? 'dark-mode' : '' ?>">
+
     <script>
 $(".update-form").submit(function (e) {
     e.preventDefault();
