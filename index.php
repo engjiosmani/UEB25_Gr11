@@ -74,17 +74,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 
     // INSERT në databazë
     $stmt = $conn->prepare("INSERT INTO contact_messages (user_id, company, message) VALUES (?, ?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
-        if ($stmt->execute()) {
-            $_SESSION['message_sent'] = true;
-            header("Location: index.php#section_6");
-            exit;
+if ($stmt) {
+    $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
+    if ($stmt->execute()) {
+        $_SESSION['message_sent'] = true;
+
+        // Nëse është selektuar checkbox për email
+        if (isset($_POST['also_send_email']) && $_POST['also_send_email'] === 'on') {
+            $to = $_SESSION['user']->email;
+            $subject = "Mesazhi juaj te Festava Live";
+            $body = "Faleminderit për mesazhin tuaj nga kompania: $company\n\n"
+                  . "Mesazhi: $message_cleaned";
+            $headers = "From: no-reply@festava.com";
+
+            if (!mail($to, $subject, $body, $headers)) {
+                error_log("Dërgimi i emailit DËSHTOI për: $to");
+            }
         }
-        $stmt->close();
-    } else {
-        echo "<div class='alert alert-danger text-center' style='margin: 20px auto; width: 60%;'>There was a problem sending your message.</div>";
+
+        header("Location: index.php#section_6");
+        exit;
     }
+}
 }
 ?>
 
