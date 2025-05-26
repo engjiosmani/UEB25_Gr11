@@ -7,6 +7,27 @@ require_once 'klasat/Admin.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Fillojmë sesionin nëse nuk është aktiv
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Kontrollo nëse përdoruesi ka zgjedhur ndonjë opsion për cookie
+if (isset($_POST['cookie_action'])) {
+    $action = $_POST['cookie_action'];
+
+    if ($action === 'accept') {
+        // Ruaj preferencën si cookie për 30 ditë
+        setcookie("cookie_consent", "accepted", time() + (86400 * 30), "/");
+    } elseif ($action === 'decline') {
+        // Fshi cookie duke e vendosur në të kaluarën
+        setcookie("cookie_consent", "", time() - 3600, "/");
+    }
+
+    // Rifresko faqen për të reflektuar ndryshimin
+    header("Location: index.php");
+    exit();
+}
 
 // Numërimi i vizitave me SESSION
 if (!isset($_SESSION['visit_count'])) {
@@ -150,6 +171,36 @@ if ($stmt) {
 .btn-festava:hover {
     background-color: #e0521f;
 }
+body {
+    background-color: <?php echo isset($_COOKIE['cookie_consent']) && $_COOKIE['cookie_consent'] === 'accepted' ? '#fbeee6' : '#ffffff'; ?>;
+    transition: background-color 0.5s ease;
+}
+.cookie-banner {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    padding: 20px 30px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    z-index: 9999;
+    text-align: center;
+    border-radius: 8px;
+}
+.cookie-banner button {
+    margin: 10px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+.cookie-banner .accept {
+    background-color: #623c3c;
+    color: white;
+}
+.cookie-banner .decline {
+    background-color: #9c4949;
+    color: white;
+}
 
 </style>
 <?php endif; ?>
@@ -159,7 +210,15 @@ if ($stmt) {
 </head>
 
 <body class="<?= ($theme === 'dark') ? 'dark-mode' : '' ?>">
-
+<?php if (!isset($_COOKIE['cookie_consent'])): ?>
+<div class="cookie-banner">
+    <p>Ne përdorim cookies për të përmirësuar përvojën tuaj në faqen tonë. Duke vazhduar, ju pranoni përdorimin e cookies. <a href="#">Mëso më shumë</a></p>
+    <form method="POST">
+        <button type="submit" name="cookie_action" value="accept" class="accept">Prano</button>
+        <button type="submit" name="cookie_action" value="decline" class="decline">Refuzo</button>
+    </form>
+</div>
+<?php endif; ?>
     <script>
 $(".update-form").submit(function (e) {
     e.preventDefault();
