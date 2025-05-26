@@ -13,6 +13,13 @@ function pastroMesazhin(&$mesazhi) {
     $mesazhi = preg_replace('/\s+/', ' ', $mesazhi); 
 }
 
+$total_tickets_sold = 0;
+
+function &getTotalTicketsSoldRef() {
+    global $total_tickets_sold;
+    return $total_tickets_sold;
+}
+
 
 function validateAndFormatPhone($phone) {
     $digitsOnly = preg_replace("/\D+/", "", $phone);
@@ -89,6 +96,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
    if ($stmt->affected_rows > 0) {
+    
+    $ref = &getTotalTicketsSoldRef();
+    $ref += $num_tickets;
+    
     $_SESSION['ticket_success'] = "Thank you, {$name}! You purchased {$num_tickets} ticket(s) for <strong>{$ticket_type}</strong>. Total: \${$total_price}.";
     header("Location: index.php"); 
     exit();
