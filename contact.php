@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
 
         // EMAIL
         if (isset($_POST['also_send_email'])) {
-            $to = "engji.osmani@student.uni-pr.edu";
+            $to = "engjiosmani5@gmail.com";
             $subject = "Mesazh i ri nga kompania: $company";
             $emailMessage = "Nga përdoruesi ID: $user_id\nKompania: $company\nMesazhi: $message_cleaned";
 
