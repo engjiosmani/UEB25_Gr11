@@ -20,6 +20,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
 
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,6 +37,21 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
     .sidebar a:hover, .sidebar a.active { background-color: #f2541b; }
     .main-content { padding: 30px; background-color: #fff; border-radius: 20px; margin: 20px; box-shadow: 0 8px 20px rgba(255, 84, 27, 0.3); }
     .message-box { background-color:#f2541b ; color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    .btn-festava {
+  background-color: #ff6126;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-festava:hover {
+  background-color: #e55312;
+  color: white;
+}
+
   </style>
 </head>
 <body>
@@ -85,71 +101,9 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         }
         ?>
       </div>
-
-    <!-- Users Section -->
-
-
-      <!-- Users Section -->
-      <div class="main-content" id="users">
-        <h3 class="text-warning mb-4"><i class="bi bi-people-fill"></i> Registered Users</h3>
-        <?php
-        $userQuery = "SELECT id, fullname, email, dob, role, phone FROM users ORDER BY id DESC";
-        $userResult = $conn->query($userQuery);
-        if ($userResult && $userResult->num_rows > 0) {
-          echo "<table class='table table-striped'>";
-          echo "<thead class='table-dark'><tr><th>Full Name</th><th>Email</th><th>Date of Birth</th><th>Phone</th><th>Role</th><th>Action</th></tr></thead><tbody>";
-          while ($user = $userResult->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($user['fullname']) . "</td>";
-            echo "<td>" . htmlspecialchars($user['email']) . "</td>";
-            echo "<td>" . $user['dob'] . "</td>";
-            echo "<td>" . htmlspecialchars($user['phone']) . "</td>";
-            echo "<td>" . ucfirst($user['role']) . "</td>";
-            if (strtolower($user['role']) !== 'admin') {
-              echo "<td><a href='?id=" . $user['id'] . "' onclick=\"return confirm('Are you sure you want to delete this user?')\" class='btn btn-festava btn-sm'>Delete</a></td>";
-            } else {
-              echo "<td><span class='text-muted'>-</span></td>";
-            }
-            echo "</tr>";
-          }
-          echo "</tbody></table>";
-        } else {
-          echo "<p class='text-muted'>No users found.</p>";
-        }
-        ?>
-      </div>
-
-      <!-- Tickets Section -->
-      <div class="main-content" id="tickets">
-        <h3 class="text-warning mb-4"><i class="bi bi-ticket-perforated-fill"></i> Purchased Tickets</h3>
-        <?php
-        $ticketQuery = "SELECT t.id, u.fullname AS user_name, u.phone, t.ticket_type, t.num_tickets, t.total_price
-                        FROM tickets t
-                        JOIN users u ON t.user_id = u.id
-                        ORDER BY t.id DESC";
-        $ticketResult = $conn->query($ticketQuery);
-        if ($ticketResult && $ticketResult->num_rows > 0) {
-          echo "<table class='table table-striped'>";
-          echo "<thead class='table-dark'><tr><th>User</th><th>Type</th><th>Tickets</th><th>Phone</th><th>Total</th><th>Action</th></tr></thead><tbody>";
-          while ($row = $ticketResult->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($row['user_name']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['ticket_type']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['num_tickets']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
-            echo "<td>$" . number_format($row['total_price'], 2) . "</td>";
-            echo "<td><a href='delete_ticket.php?id=" . $row['id'] . "' onclick=\"return confirm('A jeni i sigurt që dëshironi ta fshini këtë biletë?')\" class='btn btn-danger btn-sm'>Fshij</a></td>";
-            echo "</tr>";
-          }
-          echo "</tbody></table>";
-        } else {
-          echo "<p class='text-muted'>No tickets purchased yet.</p>";
-        }
-        ?>
-      </div>
-<!-- VOTAT PËR ARTISTËT -->
-<div class="main-content" id="votes">
-  <h3 class="text-warning mb-4"><i class="bi bi-bar-chart-fill"></i> Artist Votes</h3>
+<!-- Users Section -->
+<div class="main-content" id="users">
+  <h3 class="text-warning mb-4"><i class="bi bi-people-fill"></i> Registered Users</h3>
   <?php
   $userQuery = "SELECT id, fullname, email, dob, role, phone FROM users ORDER BY id DESC";
   $userResult = $conn->query($userQuery);
@@ -164,7 +118,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       echo "<td>" . htmlspecialchars($user['phone']) . "</td>";
       echo "<td>" . ucfirst($user['role']) . "</td>";
       if (strtolower($user['role']) !== 'admin') {
-        echo "<td><a href='delete_user.php?id=" . $user['id'] . "' onclick=\"return confirm('A jeni i sigurt që dëshironi ta fshini këtë përdorues?')\" class='btn btn-danger btn-sm'>Fshij</a></td>";
+        echo "<td><a href='delete_user.php?id=" . $user['id'] . "' onclick=\"return confirm('Are you sure you want to delete this user?')\" class='btn btn-festava btn-sm'>Delete</a></td>";
       } else {
         echo "<td><span class='text-muted'>-</span></td>";
       }
@@ -176,6 +130,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
   }
   ?>
 </div>
+
 <!-- Tickets Section -->
 <div class="main-content" id="tickets">
   <h3 class="text-warning mb-4"><i class="bi bi-ticket-perforated-fill"></i> Purchased Tickets</h3>
@@ -195,7 +150,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       echo "<td>" . htmlspecialchars($row['num_tickets']) . "</td>";
       echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
       echo "<td>$" . number_format($row['total_price'], 2) . "</td>";
-      echo "<td><a href='delete_ticket.php?id=" . $row['id'] . "' onclick=\"return confirm('A jeni i sigurt që dëshironi ta fshini këtë biletë?')\" class='btn btn-danger btn-sm'>Fshij</a></td>";
+      echo "<td><a href='delete_ticket.php?id=" . $row['id'] . "' onclick=\"return confirm('Are you sure you want to delete this ticket?')\" class='btn btn-festava btn-sm'>Delete</a></td>";
       echo "</tr>";
     }
     echo "</tbody></table>";
@@ -205,6 +160,35 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
   ?>
 </div>
 
+<!-- VOTAT PËR ARTISTËT -->
+<div class="main-content" id="votes">
+  <h3 class="text-warning mb-4"><i class="bi bi-bar-chart-fill"></i> Artist Votes</h3>
+  <?php
+  $userQuery = "SELECT id, fullname, email, dob, role, phone FROM users ORDER BY id DESC";
+  $userResult = $conn->query($userQuery);
+  if ($userResult && $userResult->num_rows > 0) {
+    echo "<table class='table table-striped'>";
+    echo "<thead class='table-dark'><tr><th>Full Name</th><th>Email</th><th>Date of Birth</th><th>Phone</th><th>Role</th><th>Action</th></tr></thead><tbody>";
+    while ($user = $userResult->fetch_assoc()) {
+      echo "<tr>";
+      echo "<td>" . htmlspecialchars($user['fullname']) . "</td>";
+      echo "<td>" . htmlspecialchars($user['email']) . "</td>";
+      echo "<td>" . $user['dob'] . "</td>";
+      echo "<td>" . htmlspecialchars($user['phone']) . "</td>";
+      echo "<td>" . ucfirst($user['role']) . "</td>";
+      if (strtolower($user['role']) !== 'admin') {
+       echo "<td><a href='delete_user.php?id=" . $user['id'] . "' onclick=\"return confirm('Are you sure you want to delete this user?')\" class='btn btn-festava btn-sm'>Delete</a></td>";
+      } else {
+        echo "<td><span class='text-muted'>-</span></td>";
+      }
+      echo "</tr>";
+    }
+    echo "</tbody></table>";
+  } else {
+    echo "<p class='text-muted'>No users found.</p>";
+  }
+  ?>
+</div>
 <div class="main-content" id="suggestions">
   <h3 class="text-warning mb-4"><i class="bi bi-star-fill"></i> Artist Suggestions 2026</h3>
   <?php
