@@ -1097,9 +1097,33 @@ if (isset($_COOKIE['last_ticket'])) {
             setTimeout(() => alert.remove(), 1000);
         });
     }, 5000);
-</script>
-<script>
-$(document).ready(function () {
+    $(document).ready(function () {
+    $(".update-form").submit(function (e) {
+        e.preventDefault();
+        $.post("update_ticket.php", $(this).serialize(), function (response) {
+            if (response.trim() === "success") {
+                alert("Bileta u përditësua me sukses.");
+                location.reload();
+            } else {
+                alert("Gabim: " + response);
+            }
+        });
+    });
+
+    $(".delete-btn").click(function () {
+        if (confirm("A jeni i sigurt që dëshironi ta anuloni këtë biletë?")) {
+            const ticketId = $(this).data("id");
+            $.post("delete_ticket.php", { id: ticketId }, function (response) {
+                if (response.trim() === "success") {
+                    alert("Bileta u anulua.");
+                    location.reload();
+                } else {
+                    alert("Gabim: " + response);
+                }
+            });
+        }
+    });
+});
     // Sugjerimi i artistit
     $("#suggestionForm").submit(function(e) {
         e.preventDefault();
@@ -1122,15 +1146,15 @@ $(document).ready(function () {
 
         $.post("ajax_handler.php", { vote_artist: artist }, function (response) {
             if (response === "success") {
-                alert("✅ Votimi u ruajt me sukses!");
+                alert(" Votimi u ruajt me sukses!");
                 loadVotes();
             } else if (response === "already_voted") {
-                alert("⚠️ Ju keni votuar tashmë!");
+                alert(" Ju keni votuar tashmë!");
             } else {
-                alert("❌ Gabim gjatë votimit.");
+                alert(" Gabim gjatë votimit.");
             }
         });
-    });
+    
 
     // Leximi i votave (me AJAX)
     function loadVotes() {
@@ -1149,7 +1173,6 @@ $(document).ready(function () {
     loadVotes();
 });
 </script>
-
 
 </body>
 

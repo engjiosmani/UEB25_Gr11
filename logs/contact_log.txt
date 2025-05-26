@@ -2,3 +2,5 @@
 [2025-05-26 04:08:13] Perd: 2 | Kompania: testtt | Mesazh: sdfghjk
 [2025-05-26 04:09:16] Perd: 2 | Kompania: testtt | Mesazh: sdfghjk
 [2025-05-26 04:10:30] Perd: 2 | Kompania: testtt | Mesazh: sdfghjk
+[2025-05-26 18:28:11] Perd: 8 | Kompania: test | Mesazh: test
+[2025-05-26 19:00:01] Perd: 10 | Kompania: test | Mesazh: 123

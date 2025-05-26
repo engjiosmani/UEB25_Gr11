@@ -3,30 +3,54 @@ require_once 'db_conn.php';
 session_start();
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
-    exit();
+    die("Jo i autorizuar");
 }
 
+$user_id = $_GET['id'] ?? null;
 
-if (isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
+if (!$user_id) {
+    die("ID e përdoruesit mungon.");
+}
 
-    
-     if ($_SESSION['user_id'] == $id) {
-        echo "You can't delete yourself!";
-      exit();
-    }
+// 1. Fshi biletat
+$stmt1 = $conn->prepare("DELETE FROM tickets WHERE user_id = ?");
+if ($stmt1) {
+    $stmt1->bind_param("i", $user_id);
+    $stmt1->execute();
+    $stmt1->close();
+} else {
+    die("Gabim në prepare për tickets: " . $conn->error);
+}
 
-    
-    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-    $stmt->bind_param("i", $id);
+// 2. Fshi mesazhet e kontaktit
+$stmt2 = $conn->prepare("DELETE FROM contact_messages WHERE user_id = ?");
+if ($stmt2) {
+    $stmt2->bind_param("i", $user_id);
+    $stmt2->execute();
+    $stmt2->close();
+} else {
+    die("Gabim në prepare për contact_messages: " . $conn->error);
+}
 
-    if ($stmt->execute()) {
-        header("Location: admin_dashboard.php#users");
+// 3. Fshi votat në artist_votes (nëse tabela ekziston)
+$stmt3 = $conn->prepare("DELETE FROM artist_votes WHERE user_id = ?");
+if ($stmt3) {
+    $stmt3->bind_param("i", $user_id);
+    $stmt3->execute();
+    $stmt3->close();
+} 
+
+// 4. Fshi vetë përdoruesin
+$stmt4 = $conn->prepare("DELETE FROM users WHERE id = ? AND role != 'admin'");
+if ($stmt4) {
+    $stmt4->bind_param("i", $user_id);
+    if ($stmt4->execute()) {
+        $stmt4->close();
+        header("Location: admin_dashboard.php?user_deleted=true");
+        exit();
     } else {
-        echo "Gabim gjatë fshirjes!";
+        die("Gabim gjatë fshirjes së përdoruesit.");
     }
-
-    $stmt->close();
+} else {
+    die("Gabim në prepare për users: " . $conn->error);
 }
-?>
