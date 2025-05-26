@@ -127,6 +127,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
   #section_8 h2, #section_8 p, #section_8 label {
     color: #fff;
   }
+  .btn-festava {
+    background-color: #ff6126;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-festava:hover {
+    background-color: #e0521f;
+}
+
+
+
 </style>
 <?php endif; ?>
 
@@ -820,28 +835,28 @@ if (isset($_SESSION['user'])) {
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-4">
-                <h2>Biletat e Mia</h2>
+                <h2 class="text-white">My Tickets</h2>
             </div>
 
             <?php if (!isset($_SESSION['user'])): ?>
-                <div class="alert alert-warning text-center">Duhet të jeni të kyçur për të parë biletat.</div>
+                <div class="alert alert-warning text-center">You must be logged in to view your tickets.</div>
             <?php elseif (empty($tickets)): ?>
-                <div class="alert alert-info text-center">Nuk ke blerë ende bileta.</div>
+                <div class="alert alert-info text-center">You haven't purchased any tickets yet.</div>
             <?php else: ?>
                 <div class="table-responsive">
-                    <table class="table table-bordered bg-white">
-                        <thead class="table-dark">
+                    <table class="table table-bordered bg-white rounded shadow">
+                        <thead class="table-dark text-center">
                             <tr>
                                 <th>ID</th>
-                                <th>Lloji</th>
-                                <th>Sasia</th>
-                                <th>Totali</th>
-                                <th>Veprime</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($tickets as $ticket): ?>
-                                <tr>
+                                <tr class="align-middle text-center">
                                     <form class="update-form" method="post">
                                         <td><?= $ticket['id'] ?></td>
                                         <td>
@@ -856,8 +871,14 @@ if (isset($_SESSION['user'])) {
                                         <td>$<?= number_format($ticket['total_price'], 2) ?></td>
                                         <td>
                                             <input type="hidden" name="ticket_id" value="<?= $ticket['id'] ?>">
-                                            <button type="submit" class="btn btn-primary btn-sm">Përditëso</button>
-                                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="<?= $ticket['id'] ?>">Anulo</button>
+                                           <button type="submit" class="btn btn-festava btn-sm me-2">
+                                           <i class="bi bi-arrow-repeat"></i> Update
+                                           </button>
+                                           <button type="button" class="btn btn-festava-outline btn-sm delete-btn" data-id="<?= $ticket['id'] ?>">
+                                            <i class="bi bi-x-circle"></i> Cancel
+                                            </button>
+
+
                                         </td>
                                     </form>
                                 </tr>
@@ -869,6 +890,7 @@ if (isset($_SESSION['user'])) {
         </div>
     </div>
 </section>
+
 <br>
 <section class="section-padding section-bg" id="section_8">
     <div class="container">
