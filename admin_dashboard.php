@@ -137,6 +137,19 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         }
         ?>
       </div>
+<?php
+// SHFAQJA E LOG-UT nga fajlli contact_log.txt, vetëm për adminin
+if ($_SESSION['role'] === 'admin' && file_exists('logs/contact_log.txt')) {
+    echo "<div class='main-content mt-4'>";
+    echo "<h3 class='text-warning mb-4'><i class='bi bi-file-earmark-text'></i> Log nga contact_log.txt</h3>";
+    $lines = file('logs/contact_log.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    echo "<div class='bg-dark text-light p-3 rounded' style='max-height:300px; overflow-y:auto; font-family:monospace; font-size:13px;'>";
+    foreach ($lines as $line) {
+        echo htmlspecialchars($line) . "<br>";
+    }
+    echo "</div></div>";
+}
+?>
 
     </div>
   </div>

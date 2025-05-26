@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["contact-message"])) {
         $stmt->bind_param("iss", $user_id, $company, $message_cleaned);
         if ($stmt->execute()) {
             $_SESSION['message_sent'] = true;
-            // === LOGIMI NË FAJLL: contact_log.txt ===
+            // === LOGIMI NE FAJLL: contact_log.txt ===
             if (!file_exists('logs')) {
                 mkdir('logs', 0777, true);
             }
