@@ -301,9 +301,9 @@ if (isset($_SESSION['ticket_error'])) {
         </div>
 
         <div id="weather-info">
-            <h5>Moti në vendin e festivalit:</h5>
-            <p id="weather">Duke u ngarkuar...</p>
-        </div>
+    <h5>Weather at the festival location:</h5>
+    <p id="weather">Loading...</p>
+</div>
     </div>
 </div>
 
