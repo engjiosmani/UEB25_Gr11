@@ -881,6 +881,22 @@ if (isset($_SESSION['user'])) {
         </div>
     </div>
 </section>
+<section class="section-padding" id="section_8">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-12 mx-auto text-center">
+        <h2 class="mb-4">Sugjero artistin për vitin 2026</h2>
+        <form id="suggestionForm">
+          <div class="mb-3">
+            <input type="text" class="form-control" name="artist_name" placeholder="Shkruaj emrin e artistit..." required>
+          </div>
+          <button type="submit" class="btn btn-primary">Dërgo Sugjerimin</button>
+        </form>
+        <div id="suggestionMessage" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
 
@@ -1013,6 +1029,7 @@ if (isset($_SESSION['user'])) {
                    
                 </div>
             </div>
+            
         </div>
          <div class="text-center small text-muted">
     Kjo faqe është vizituar <?= $_SESSION['visit_count'] ?> herë
@@ -1033,6 +1050,17 @@ if (isset($_SESSION['user'])) {
             var mapTab = new bootstrap.Tab(document.querySelector('#nav-ContactMap-tab'));
             mapTab.show();
         }
+        
+  $("#suggestionForm").submit(function(e) {
+    e.preventDefault();
+    var artist = $("input[name='artist_name']").val().trim();
+
+    $.post("submit_suggestion.php", { artist_name: artist }, function(response) {
+      $("#suggestionMessage").html(response);
+      $("#suggestionForm")[0].reset();
+    });
+  });
+
     </script>
 
 <?php 

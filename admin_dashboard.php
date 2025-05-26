@@ -49,6 +49,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       <a href="#users"><i class="bi bi-people"></i> Users</a>
       <a href="#tickets"><i class="bi bi-ticket"></i> Tickets</a>
 <a href="#votes"><i class="bi bi-bar-chart-fill"></i> Votat për Artistët</a>
+  <a href="#suggestions"><i class="bi bi-stars"></i> Sugjerimet për Artistët</a>
 
 <a href="admin_logs.php"><i class="bi bi-file-earmark-text"></i> Historiku i Mesazheve</a>
       <a href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>
@@ -158,6 +159,26 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       echo "</tbody></table>";
   } else {
       echo "<p class='text-muted'>Nuk ka vota ende.</p>";
+  }
+  ?>
+</div>
+<div class="main-content" id="suggestions">
+  <h3 class="text-warning mb-4"><i class="bi bi-star-fill"></i> Sugjerimet për Artistët 2026</h3>
+  <?php
+  $file = "logs/suggestions.txt";
+  if (file_exists($file)) {
+    $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if (count($lines) > 0) {
+      echo "<ul class='list-group'>";
+      foreach ($lines as $line) {
+        echo "<li class='list-group-item'>" . htmlspecialchars($line) . "</li>";
+      }
+      echo "</ul>";
+    } else {
+      echo "<p class='text-muted'>Nuk ka ende sugjerime.</p>";
+    }
+  } else {
+    echo "<p class='text-muted'>Nuk është krijuar fajlli i sugjerimeve.</p>";
   }
   ?>
 </div>
