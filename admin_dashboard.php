@@ -48,6 +48,8 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       <a href="#messages" class="active"><i class="bi bi-envelope"></i> Messages</a>
       <a href="#users"><i class="bi bi-people"></i> Users</a>
       <a href="#tickets"><i class="bi bi-ticket"></i> Tickets</a>
+<a href="#votes"><i class="bi bi-bar-chart-fill"></i> Votat për Artistët</a>
+
 <a href="admin_logs.php"><i class="bi bi-file-earmark-text"></i> Historiku i Mesazheve</a>
       <a href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
@@ -138,6 +140,27 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
         }
         ?>
       </div>
+<!-- VOTAT PËR ARTISTËT -->
+<div class="main-content" id="votes">
+  <h3 class="text-warning mb-4"><i class="bi bi-bar-chart-fill"></i> Votat për Artistët</h3>
+  <?php
+  $voteQuery = "SELECT artist_name, COUNT(*) as votes FROM artist_votes GROUP BY artist_name ORDER BY votes DESC";
+  $voteResult = $conn->query($voteQuery);
+  if ($voteResult && $voteResult->num_rows > 0) {
+      echo "<table class='table table-bordered'>";
+      echo "<thead class='table-dark'><tr><th>Artist</th><th>Numri i Votave</th></tr></thead><tbody>";
+      while ($row = $voteResult->fetch_assoc()) {
+          echo "<tr>";
+          echo "<td>" . htmlspecialchars($row['artist_name']) . "</td>";
+          echo "<td>" . $row['votes'] . "</td>";
+          echo "</tr>";
+      }
+      echo "</tbody></table>";
+  } else {
+      echo "<p class='text-muted'>Nuk ka vota ende.</p>";
+  }
+  ?>
+</div>
 
     </div>
   </div>
