@@ -48,7 +48,7 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
       <a href="#messages" class="active"><i class="bi bi-envelope"></i> Messages</a>
       <a href="#users"><i class="bi bi-people"></i> Users</a>
       <a href="#tickets"><i class="bi bi-ticket"></i> Tickets</a>
-      <a href="admin_logs.php"><i class="bi bi-file-earmark-text"></i> Shfaq Log Mesazhet</a>
+<a href="admin_logs.php"><i class="bi bi-file-earmark-text"></i> Historiku i Mesazheve</a>
       <a href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
 

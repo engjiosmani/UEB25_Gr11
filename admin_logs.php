@@ -21,14 +21,14 @@ if (file_exists($filepath) && filesize($filepath) > 0) {
         $logEntries[] = $line;
     }
 } else {
-    $logEntries[] = "Nuk ka log për të shfaqur.";
+    $logEntries[] = "Nuk ka mesazhe për të shfaqur.";
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Log i Mesazheve</title>
+    <title>Historiku i Mesazheve</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -67,17 +67,26 @@ if (file_exists($filepath) && filesize($filepath) > 0) {
         .log-entry:last-child {
             margin-bottom: 0;
         }
+        .btn-back {
+            display: block;
+            margin: 30px auto 0;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Log i Mesazheve të Kontaktit</h2>
-        <p class="subtitle">(Këto të dhëna janë ruajtur automatikisht në fajllin <code>logs/contact_log.txt</code> për qëllime auditimi)</p>
+        <h2>Historiku i Mesazheve</h2>
+        <p class="subtitle">Këto janë mesazhe të ruajtura nga forma e kontaktit, të vlefshme për përdorim të brendshëm dhe monitorim.</p>
         <?php foreach ($logEntries as $entry): ?>
             <div class="log-entry">
                 <?= htmlspecialchars($entry) ?>
             </div>
         <?php endforeach; ?>
+
+        <div class="btn-back">
+            <a href="admin_dashboard.php" class="btn btn-outline-dark">← Kthehu te Paneli i Administratorit</a>
+        </div>
     </div>
 </body>
 </html>
